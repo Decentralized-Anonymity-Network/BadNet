@@ -14,7 +14,7 @@ pip3 install eciespy
 cd /home
 unzip BADNet.zip
 cd BADNet
-aclcoal
+aclocal
 autoconf
 autoheader
 automake
