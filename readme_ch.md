@@ -43,6 +43,7 @@
 
 # 其他资料
 
-- 以太坊测试币水龙头网站：https://faucet.dimensions.network/
+- 以太坊测试币水龙头网站1：https://faucet.dimensions.network/
+- 以太坊测试币水龙头网站2：https://teth.bitaps.com/
 
 - 以太坊测试网浏览器：https://ropsten.etherscan.io/
