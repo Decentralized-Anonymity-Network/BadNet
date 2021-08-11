@@ -27,5 +27,5 @@ sudo ./tor -f /usr/local/BADNet-client/BADNet.client
 sudo cat /usr/local/BADNet-client/lib/MSRI
 确定MSRI有内容后开始使用网络
 查看IP：curl --socks5 127.0.0.1:9550 http://checkip.amazonaws.com/
-
+尝试访问其他网站：curl --socks5 127.0.0.1:9550 http://www.baidu.com
 
