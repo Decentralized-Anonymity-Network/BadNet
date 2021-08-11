@@ -1,0 +1,29 @@
+（1）下载源码：
+git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
+cd BadNet/2021-08-11
+unzip BADNet.zip && cd BADNet
+
+（2）安装相关库 (centos)：
+yum install gcc libevent-devel openssl-devel automake python36 python36-devel -y
+sudo ln -s /usr/lib64/libpython3.6m.so.1.0 /usr/lib/libpython3.6.so
+pip3 install --upgrade pip
+pip3 install web3 eciespy
+
+（3）编译：
+sudo sh badnet.sh （会输出一个以太坊地址）
+sudo ./configure
+sudo make
+
+（4）运行：
+用生成的以太坊地址获取Ropsten Ethereum (rETH) Faucet：（以下网站任选其一即可）
+https://faucet.dimensions.network/ 
+https://teth.bitaps.com/
+https://faucet.ropsten.be/
+
+cd src/app/
+sudo ./tor -f /usr/local/BADNet-client/BADNet.client
+
+等待一个周期（当前设定为10分钟）后可以开始使用网络：
+查看IP：curl --socks5 127.0.0.1:9550 http://checkip.amazonaws.com/
+
+
