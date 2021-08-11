@@ -23,7 +23,9 @@ https://faucet.ropsten.be/
 cd src/app/
 sudo ./tor -f /usr/local/BADNet-client/BADNet.client
 
-等待一个周期（当前设定为10分钟）后可以开始使用网络：
+等待1至2个周期（当前设定1周期为10分钟）后:
+sudo cat /usr/local/BADNet-client/lib/MSRI
+确定MSRI有内容后开始使用网络
 查看IP：curl --socks5 127.0.0.1:9550 http://checkip.amazonaws.com/
 
 
