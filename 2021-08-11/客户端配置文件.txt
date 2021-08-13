@@ -1,18 +1,20 @@
 （1）下载源码：
-git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
-cd BadNet/2021-08-11
-unzip BADNet.zip && cd BADNet
+git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git；
+（如果本机git指令无法访问github，可以通过网页下载压缩包）；
+cd BadNet/2021-08-11；
+unzip BADNet.zip；
+cd BADNet；
 
 （2）安装相关库 (centos and Python 3.6)：
-yum install gcc libevent-devel openssl-devel automake python36 python36-devel -y
-sudo ln -s /usr/lib64/libpython3.6m.so.1.0 /usr/lib/libpython3.6.so
-pip3 install --upgrade pip
-pip3 install web3 eciespy
+yum install gcc libevent-devel openssl-devel automake python36 python36-devel -y；
+sudo ln -s /usr/lib64/libpython3.6m.so.1.0 /usr/lib/libpython3.6.so；
+pip3 install --upgrade pip；
+pip3 install web3 eciespy；
 
 （3）编译：
-sudo sh badnet.sh （会输出一个以太坊地址）
-sudo ./configure
-sudo make
+sudo sh badnet.sh （会输出一个以太坊地址）；
+sudo ./configure；
+sudo make；
 
 （4）运行：
 用生成的以太坊地址获取Ropsten Ethereum (rETH) Faucet：（以下网站任选其一即可）
@@ -20,12 +22,18 @@ https://faucet.dimensions.network/
 https://teth.bitaps.com/
 https://faucet.ropsten.be/
 
-cd src/app/
-sudo ./tor -f /usr/local/BADNet-client/BADNet.client
+cd src/app/；
+sudo ./tor -f /usr/local/BADNet-client/BADNet.client；
 
 等待1至2个周期（当前设定1周期为10分钟）后:
-sudo cat /usr/local/BADNet-client/lib/MSRI
-确定MSRI有内容后开始使用网络
-查看IP：curl --socks5 127.0.0.1:9550 http://checkip.amazonaws.com/
-尝试访问其他网站：curl --socks5 127.0.0.1:9550 http://www.baidu.com
+sudo cat /usr/local/BADNet-client/lib/MSRI；
+（如果MSRI不存在，或者IP少于3个，就继续等待）；
+确定MSRI有内容后开始使用网络；
+curl --socks5 127.0.0.1:9550 http://checkip.amazonaws.com/；
+（当返回为1个ip时，表示curl指令正确）
 
+（5）批量运行：
+当curl指令成功后，执行curl_1000.sh文件（此文件在2021-08-11目录下），自动执行1000次，执行指令“sh curl_1000.sh”；
+执行完毕后，会生成result1.txt文件，将此文件内容拷贝到测试文档；
+
+实验结束；
