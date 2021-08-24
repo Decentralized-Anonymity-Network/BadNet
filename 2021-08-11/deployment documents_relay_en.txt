@@ -12,7 +12,7 @@ git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 cd BadNet/2021-08-11
 unzip BADNet.zip
 cd BADNet
-(Open BADNet.relay, and fill in "Nickname", "Orport" and "Address")
+(Open BADNet.relay, and fill in "Nickname", "OrPort" and "Address")
 sudo sh badnet_relay.sh (This step will output an Ethereum address)
 
 obtain rETH (Ropsten Ethereum) with generated Ethereum address (Just choose one of these websites):
