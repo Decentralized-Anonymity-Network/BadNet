@@ -3,7 +3,7 @@ AssumeReachable 1
 DataDirectory /usr/local/BADNet-relay/lib
 RunAsDaemon 1
 ConnLimit 60
-Nickname XX
+Nickname XXX
 ShutdownWaitLength 0
 PidFile /usr/local/BADNet-relay/lib/pid
 Log notice file /usr/local/BADNet-relay/log/notice.log
@@ -16,7 +16,7 @@ DirAuthority DA orport=10001 v3ident=3CCB0BF5FF0420A304C815C2773F4A3BD732D901 12
 SocksPort 0
 OrPort 22222
 ControlPort 9551
-Address XX
+Address XXX
 ExitRelay 1
 ExitPolicy accept *:*
 DirCache 0
