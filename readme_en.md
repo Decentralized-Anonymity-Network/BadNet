@@ -45,8 +45,7 @@ Status: this smart contract is in operation.
 # Others
 
 - rETH (Ropsten Ethereum) Faucet: 
-https://faucet.dimensions.network/
-https://teth.bitaps.com/
+https://faucet.dimensions.network/ or https://teth.bitaps.com/
 
 - TESTNET Ropsten (ETH) Blockchain Explorer: 
 https://ropsten.etherscan.io/
