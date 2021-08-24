@@ -1,0 +1,28 @@
+(1) Requirements: 
+The prototype system installation requires CentOS system and Python 3.6.
+
+(2) Dependencies:
+sudo yum install gcc libevent-devel openssl-devel automake python36 python36-devel -y
+sudo ln -s /usr/lib64/libpython3.6m.so.1.0 /usr/lib/libpython3.6.so
+pip3 install --upgrade pip
+pip3 install web3 eciespy
+
+(3) Setup:
+git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
+cd BadNet/2021-08-11
+unzip BADNet.zip
+cd BADNet
+(Open BADNet.relay, and fill in "Nickname" and  "Address")
+sudo sh badnet_relay.sh (This step will output an Ethereum address)
+
+obtain rETH (Ropsten Ethereum) with generated Ethereum address (Just choose one of these websites):
+https://faucet.dimensions.network/ 
+https://teth.bitaps.com/
+https://faucet.ropsten.be/
+
+(4) Compile and running:
+sudo ./configure
+sudo make
+cd src/app
+sudo ./tor --list-fingerprint --orport 1 --dirserver "x 127.0.0.1:1 ffffffffffffffffffffffffffffffffffffffff" --datadirectory /usr/local/BADNet-relay/lib/
+sudo ./tor -f /usr/local/BADNet-relay/BADNet.relay
