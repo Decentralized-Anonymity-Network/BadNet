@@ -17,6 +17,7 @@ sudo sh badnet.sh (This step will output an Ethereum address)
 obtain rETH (Ropsten Ethereum) with generated Ethereum address (Just choose one of these websites):
 https://faucet.dimensions.network/ 
 https://teth.bitaps.com/
+https://faucet.ropsten.be/
 
 (4) Compile and running:
 sudo ./configure
