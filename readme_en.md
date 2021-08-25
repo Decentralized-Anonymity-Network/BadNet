@@ -4,7 +4,7 @@ The project is a decentralized anonymity network based on blockchain and smart c
 # Function
 The project focuses on improving the directory functionality of the Tor system, and the main improvements include:
 1. Use smart contracts to reconstruct the core functions of Tor directory authority to realize a decentralized directory authority (DDA);
-2. Relays upload “descriptor” to DDA, and clients fetch directories from DDA;
+2. Relays upload "descriptor" to DDA, and clients fetch directories from DDA;
 3. Add some auxiliary functions on the basis of Tor (e.g., entity registration, random directory, data protection) to improve the system's resistance to directory attacks.
 
 # Code
@@ -23,7 +23,7 @@ Users can download the source code and deploy their own DDA and relays to build 
 The project is currently maintaining a small anonymity network, including smart contract-based DDA that provides directory services, onion routers that provides relay services, and the client program for testing the network functionality.
 
 The prototype system is still being continuously updated, and information about the currently available system is as follows:
-- Source code: “2021-08-11” folder;
+- Source code: "2021-08-11" folder;
 - DDA’s smart contract address: 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D;
 - Number of relays: 32;
 - Relay "descriptor" update period: 10 minutes.
