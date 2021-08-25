@@ -37,7 +37,7 @@ Deployment date: July 20, 2021;
 Status: discontinued operations as of August 10, 2021, with a total of 4,427 transactions.
 3. Contract address: 0x1ed3b4ae0bcf62164a2622e3d357c68f09bc0fc4;
 Deployment date: August 10, 2021;
-Status: discontinued operations as of August 14, 2021, with a total of 5,000 transactions.
+Status: discontinued operations as of August 15, 2021, with a total of 5,608 transactions.
 4. Contract address: 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D;
 Deployment date: August 15, 2021;
 Status: this smart contract is in operation.
