@@ -9,9 +9,8 @@ pip3 install web3 eciespy
 
 (3) Setup:
 git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
-cd BadNet/2021-08-11
+cd BadNet/2021-08-11 (Open BADNet.relay, and fill in "Nickname", "OrPort" and "Address")
 unzip BADNet.zip
-(Open BADNet.relay, and fill in "Nickname", "OrPort" and "Address")
 cd BADNet
 sudo sh badnet_relay.sh (This step will output an Ethereum address)
 
