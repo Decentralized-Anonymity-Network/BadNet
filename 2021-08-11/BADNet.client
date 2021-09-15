@@ -13,5 +13,5 @@ SafeLogging 0
 DisableDebuggerAttachment 0
 DirAuthority DA orport=10001 v3ident=3CCB0BF5FF0420A304C815C2773F4A3BD732D901 127.0.0.1:10000 F3813035C03BB27887C526A9DD449F480A4C1D72
 SocksPort 9550
-ControlPort 9651
+ControlPort 9551
 FetchServerDescriptors 0
