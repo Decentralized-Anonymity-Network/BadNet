@@ -10,12 +10,12 @@ pip3 install web3 eciespy
 ```
 
 ## Setup:
-##### Get BADNet
+#### Get BADNet
 ```bat
 git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 ```
 
-##### Quick auto setup
+#### Quick auto setup
 Open the file "BADNet.relay", and fill in "Nickname", "OrPort" and "Address".
 
 ```bat
@@ -30,7 +30,7 @@ obtain rETH (Ropsten Ethereum) with generated address from one of these faucet:
 - https://teth.bitaps.com/
 - https://faucet.ropsten.be/
 
-##### Running BADNet relay:
+#### Running BADNet relay:
 ```bat
 cd src/app
 sudo ./tor --list-fingerprint --orport 1 --dirserver "x 127.0.0.1:1 ffffffffffffffffffffffffffffffffffffffff" --datadirectory /usr/local/BADNet-relay/lib/
