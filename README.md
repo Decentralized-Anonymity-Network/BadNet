@@ -26,20 +26,17 @@ Users can download the source code and deploy their own DDA and relays to build 
 The project is currently maintaining a small anonymity network, including smart contract-based DDA that provides directory services, onion routers that provides relay services, and the client program for testing the network functionality.
 
 The prototype system is still being continuously updated, and information about the currently available system is as follows:
-- Source code: BADNet-main;
-- DDA’s smart contract address: 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D;
-- Number of relays: 32;
-- Relay "descriptor" update period: 10 minutes.
+- Source Code: BADNet-main
+- DDA’s Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
+- Deployment Date: August 15, 2021
+- Number of Relays: 12
+- Relay Upload Period: 10 minutes
 
 DDA update records:
-- Contract Address: 0x1ed3b4ae0bcf62164a2622e3d357c68f09bc0fc4
-- Deployment date: August 10, 2021;
+- Contract Address: [0x1ed3b4ae0bcf62164a2622e3d357c68f09bc0fc4](https://ropsten.etherscan.io/address/0x1ed3b4ae0bcf62164a2622e3d357c68f09bc0fc4)
+- Deployment Date: August 10, 2021
 - Status: discontinued operations as of August 15, 2021
 - Total Number of transactions: 5,608
-
-- Contract address: 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D
-- Deployment date: August 15, 2021;
-- Status: this smart contract is in operation.
 
 # Others
 
