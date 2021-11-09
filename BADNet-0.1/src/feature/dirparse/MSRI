@@ -1,0 +1,27 @@
+r RelaySingapore iXB7wITJN9M5CKk7vDeBU8J3NVQ 161.117.34.5 22222
+onion-key
+-----BEGIN RSA PUBLIC KEY-----
+MIGJAoGBANaEN++VRLW0dcMFvZzaiGGuA/8hkxqKTjaR/KVbfiWNZF/OrzzU5K9P
+mPnK0TUnYILqUD5hwd6seqsKBz5p7TDEOskht2yJt40Fzzaj416133P+L+or7iw3
+7cCBFcpz6sO2q4AsMCczw4FzBQjjybingvkzWh3rpGCkQ1EshS7vAgMBAAE=
+-----END RSA PUBLIC KEY-----
+ntor-onion-key PMc040qvh1noBmcsey6dve5knL+jMNlXMvsxkJB3dk0=
+id ed25519 4qjDs/K6z9/MY2oEBWkhJ4hIdauAiPwYZqpDhhoqb3o
+r RelayAustralia A73DFNmizl/O6uyJ2NsZAxPwgug 47.74.86.51 22222
+onion-key
+-----BEGIN RSA PUBLIC KEY-----
+MIGJAoGBAOr1evZMl4Y1ZbyRMVN9QpqTAyLH728r7+SaVvY60hbTc3G2ByN6GY1a
+CWOK+ZrYM22VtjGMS0mVU9QxSJ5wryU83MQaF6uwwinILK1VgDBmYrDSAggxDl6N
+x91MFLC9rsk3mmlKklkGItX5DkS7xpUj0cHQIHZ09+3vH3lvnOfdAgMBAAE=
+-----END RSA PUBLIC KEY-----
+ntor-onion-key p+TkaMpQSVYWUjLd8l9YweodBmYrD6iLYQQxXLUnuXw=
+id ed25519 zZ6NlL7vjZ2p1a/dZfcsrUVQS9tE7lwkaAddI62kJtw
+r RelayMalaysia 0hsYyKFFk5Oliy7YWpXt+3GB+Ik 47.254.239.36 22222
+onion-key
+-----BEGIN RSA PUBLIC KEY-----
+MIGJAoGBAN0iyaactFRBHw3eP4dGIv7PEB2i5W/Pn1rX0F07z+0GKtgK1jYDD9jb
+h8maoSJZBrO6SI/88VED6ok/fyhsbBdn1TlEOk+wbU4uFzyOzYN/CIem1D/DMXtG
+ofkFNX7Z5W8lGIMeqQ1rZp695iwRawKTpHb3YiO6YzRiBlDr1b1ZAgMBAAE=
+-----END RSA PUBLIC KEY-----
+ntor-onion-key mzB66rZcxYp0HaPUtp2/akCJLNE9Lfb28Q3ZJOfXi3w=
+id ed25519 FsTJsa6osiu/TZjB1ej4chOARktADsIv2tJk0iwtsxw
