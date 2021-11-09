@@ -25,10 +25,8 @@ sudo ./configure
 sudo make
 ```
 
-obtain rETH (Ropsten Ethereum) with generated address from one of these faucet:
-- https://faucet.dimensions.network/
-- https://teth.bitaps.com/
-- https://faucet.ropsten.be/
+Get rETH (Ropsten Ethereum) with generated address from
+[Faucet1](https://faucet.dimensions.network/), [Faucet2](https://teth.bitaps.com/), or [Faucet3](https://faucet.ropsten.be/).
 
 #### Running BADNet relay:
 ```bat
