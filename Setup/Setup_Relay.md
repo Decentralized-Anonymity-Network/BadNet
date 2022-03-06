@@ -11,6 +11,8 @@ pip3 install web3 eciespy
 ```
 #### Ubuntu
 ```bat
+sudo apt-get install gcc libevent-dev libssl-dev automake python3.6 python3.6-dev -y
+sudo ln -s /usr/lib/python3.6/config-3.6m-x86_64-linux-gnu/libpython3.6.so /usr/lib/libpython3.6.so
 pip3 install --upgrade pip
 pip3 install web3 eciespy
 ```
