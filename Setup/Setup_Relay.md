@@ -1,10 +1,16 @@
 ## Requirements:
-The prototype system installation requires CentOS system and Python 3.6.
+The prototype system installation requires CentOS/Ubuntu system and Python 3.6.
 
 ## Dependencies:
+#### CentOS
 ```bat
 sudo yum install gcc libevent-devel openssl-devel automake python36 python36-devel -y
 sudo ln -s /usr/lib64/libpython3.6m.so.1.0 /usr/lib/libpython3.6.so
+pip3 install --upgrade pip
+pip3 install web3 eciespy
+```
+#### Ubuntu
+```bat
 pip3 install --upgrade pip
 pip3 install web3 eciespy
 ```
