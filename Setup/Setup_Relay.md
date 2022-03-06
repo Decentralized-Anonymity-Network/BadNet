@@ -24,10 +24,9 @@ git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 ```
 
 #### Quick auto setup
-Open the file "BADNet.relay", and fill in "Nickname", "OrPort" and "Address".
-
 ```bat
 cd BadNet
+vi BADNet.relay (fill in "Nickname", "OrPort" and "Address")
 sudo sh badnet_relay.sh (output is a Ropsten Ethereum address)
 sudo ./configure
 sudo make
