@@ -28,7 +28,7 @@ The prototype system is still being continuously updated, and information about 
 - DDA’s Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
 - Deployment Date: August 15, 2021
 - Number of Relays: 12
-- Descriptor's Upload Period: 10 minutes
+- Descriptor's Upload Period: 1 hour
 
 DDA update records:
 - Contract Address: [0x1ed3b4ae0bcf62164a2622e3d357c68f09bc0fc4](https://ropsten.etherscan.io/address/0x1ed3b4ae0bcf62164a2622e3d357c68f09bc0fc4)
