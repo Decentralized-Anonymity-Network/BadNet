@@ -37,5 +37,9 @@ After waiting for 1 to 2 periods to ensure that MSRI has content, the client can
 sudo cat /usr/local/BADNet-client/lib/MSRI
 ```
 
-#### Proxy settings in Firefox
-Settings -> General -> Network Settings -> Manual proxy configuration (SOCKS Host: 127.0.0.1 ; Port: 9550 ; SOCKS v5) 
+#### Using BADNET in Google
+```bat
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+sudo yum localinstall google-chrome-stable_current_x86_64.rpm
+google-chrome --proxy-server=socks5://127.0.0.1:9550
+```
