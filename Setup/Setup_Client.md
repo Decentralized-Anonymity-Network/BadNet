@@ -38,5 +38,4 @@ sudo cat /usr/local/BADNet-client/lib/MSRI
 ```
 
 #### Proxy settings in Firefox
-Settings -> General -> Network Settings
-  Manual proxy configuration -> SOCKS Host: 127.0.0.1. Port:9550  SOCKS v5
+Settings -> General -> Network Settings -> Manual proxy configuration -> (SOCKS Host: 127.0.0.1 ; Port:9550) SOCKS v5
