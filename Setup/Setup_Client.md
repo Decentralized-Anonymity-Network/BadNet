@@ -38,8 +38,13 @@ sudo cat /usr/local/BADNet-client/lib/MSRI
 ```
 
 #### Using BADNET in Google
+Install Google Chrome
 ```bat
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
 sudo yum localinstall google-chrome-stable_current_x86_64.rpm
+```
+
+Running Google Chrome
+```bat
 google-chrome --proxy-server=socks5://127.0.0.1:9550
 ```
