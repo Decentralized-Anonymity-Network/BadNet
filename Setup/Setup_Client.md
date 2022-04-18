@@ -37,7 +37,7 @@ After waiting for 1 to 2 periods to ensure that MSRI has content, the client can
 sudo cat /usr/local/BADNet-client/lib/MSRI
 ```
 
-#### Using BADNET in Google
+#### Using BADNET in Google Chrome
 Install Google Chrome (If already installed, please ignore)
 ```bat
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
