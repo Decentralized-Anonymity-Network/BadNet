@@ -17,16 +17,25 @@ zx
 - 部署过程：
 
 遇到的问题1：unzip BADNet.zip时报错
+
 解决方法：将解压好的文件夹拖入虚拟机
 
-遇到的问题2：运行curl报错：“curl: (7) Can't complete SOCKS5 connection to 0.0.0.0:0. (6)”
+
+遇到的问题2：运行curl报错：
+```
+“curl: (7) Can't complete SOCKS5 connection to 0.0.0.0:0. (6)”
+```
+
 解决方法：替换src/feature/nodelist/networkstatus.c，重新编译并运行
 
 遇到的问题3：
+```
 [root@localhost app]# curl --socks5 127.0.0.1:9550 http://checkip.amazonaws.com/
 curl: (7) Can't complete SOCKS5 connection to 0.0.0.0:0. (6)
+
 [root@localhost app]# curl --socks5 127.0.0.1:9550 http://checkip.amazonaws.com/
 curl: (7) Failed to receive SOCKS5 connect request ack.
+```
 解决方法：多等一个周期后（1h以后）再次运行curl行即可
 
 

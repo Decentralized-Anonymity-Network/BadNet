@@ -17,13 +17,19 @@ wfd
 - 部署过程：
 
 遇到的问题1：安装 web3 包报错
-解决方法：yum -y install gcc
 
-遇到的问题2：测试一次后需要kill进程 删除现有的MSRI
 解决方法：
+```
+yum -y install gcc
+```
+
+遇到的问题2：测试一次后需要kill进程，删除现有的MSRI
+
+解决方法：
+```
 ps -ef|grep ./tor
 rm /usr/local/BADNet/lib/MSRI
-
+```
 
 
 ## 注册账号
