@@ -10,7 +10,7 @@ pip3 install web3 eciespy
 ```
 
 ## Setup
-### Get BADNet
+### Get BADNET
 ```bat
 git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 ```
@@ -23,10 +23,10 @@ sudo ./configure
 sudo make
 ```
 
-Get rETH (Ropsten Ether) with generated address from 
+Get rETH (Ropsten Ether) with generated address from
 [Faucet1](https://faucet.dimensions.network/), [Faucet2](https://faucet.egorfine.com/), or [Faucet3](https://faucet.metamask.io/).
 
-### Running BADNet client
+### Running BADNET client
 ```bat
 cd src/app
 sudo ./tor -f /usr/local/BADNet-client/BADNet.client
