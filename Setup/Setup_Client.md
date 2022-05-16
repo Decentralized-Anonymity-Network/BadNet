@@ -23,7 +23,7 @@ sudo ./configure
 sudo make
 ```
 
-Get rETH (Ropsten Ethereum) with generated address from 
+Get rETH (Ropsten Ether) with generated address from 
 [Faucet1](https://faucet.dimensions.network/), [Faucet2](https://faucet.egorfine.com/), or [Faucet3](https://faucet.metamask.io/).
 
 #### Running BADNet client
