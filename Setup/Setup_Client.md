@@ -24,7 +24,7 @@ sudo make
 ```
 
 Get rETH (Ropsten Ethereum) with generated address from 
-[Faucet1](https://faucet.dimensions.network/), [Faucet2](https://teth.bitaps.com/), or [Faucet3](https://faucet.ropsten.be/).
+[Faucet1](https://faucet.dimensions.network/), [Faucet2](https://faucet.egorfine.com/), or [Faucet3](https://faucet.metamask.io/).
 
 #### Running BADNet client
 ```bat
@@ -32,7 +32,7 @@ cd src/app
 sudo ./tor -f /usr/local/BADNet-client/BADNet.client
 ```
 
-After waiting for 1 to 2 periods to ensure that MSRI has content, the client can start using BADNet for anonymous communication.
+Normally, after waiting for one periods (i.e., 1 hour) to ensure that MSRI has content, the client can start using BADNet for anonymous communication. (Unfortunately,  this process may take more time due to the instability of the Ropsten Testnet.)
 ```bat
 sudo cat /usr/local/BADNet-client/lib/MSRI
 ```
