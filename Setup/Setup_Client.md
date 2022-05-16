@@ -18,7 +18,7 @@ git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 #### Quick auto setup
 ```bat
 cd BADNet
-sudo sh badnet.sh (output is a Ropsten Ethereum address)
+sudo sh badnet.sh (Note that output is a Ropsten Ethereum address)
 sudo ./configure
 sudo make
 ```
