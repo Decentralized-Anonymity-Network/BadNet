@@ -2107,7 +2107,7 @@ fetch_networkstatus_callback(time_t now, const or_options_t *options)
   const int is_client = options_any_client_port_set(options) || !is_server;
 
   if (is_client){
-    if (MSRI_download_times == 9){
+    if (MSRI_download_times == 59){
       check_current_RIA_length();
       download_MSRI_with_keys_from_blockchain();
       MSRI_download_times = 0; 
