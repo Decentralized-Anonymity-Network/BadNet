@@ -1,11 +1,11 @@
-# BADNet
-BADNet: A Blockchain-Based Anti-Attack Decentralized Anonymity Network
+# BADNET
+BADNET: A Blockchain-Based Decentralized Anonymity Network
 
 ### Overview
-The project is a decentralized anonymity network based on blockchain and smart contracts, which makes use of two open source projects, Tor and Ethereum.
+The project is a decentralized anonymity network based on onion routing and blockchain, which makes use of two open source projects, Tor and Ethereum.
 
-### BADNet-0.3
-BADNet (version 0.3) is build based on Tor version 0.4.6.5 and Ropsten Ethereum Testnet. Specifically, circuit-related operations are derived from the Tor source code, but Tor Directory Authority is replaced by DDA written in Solidity (DDA's code is in Directory.sol). We also provide a patch file (badnet.patch) for readers to track our changes to the Tor code.
+### BADNET-1.0
+BADNET (version 1.0) is build on top of Tor version 0.4.6.5 and the Goerli Ethereum Testnet. The onion routing technique is derived from the Tor source code, but BADNET hides the Tor Directory Authority (DirAuth) behind an Ethereum system. More concretely, directory services are not provided directly by the DirAuth, but are supported through an Ethereum smart contract written in Solidity (DirectoryContract.sol). We also provide a patch file (badnet.patch) for readers to track our changes to the Tor code.
 
 ### Function
 The project focuses on improving the directory functionality of the Tor network, and the main improvements include:
