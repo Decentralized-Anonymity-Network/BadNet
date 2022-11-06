@@ -20,14 +20,15 @@ Our project is currently maintaining a small-scale anonymity network, including 
 The prototype system is still being continuously updated, and information about the currently available system is as follows:
 - Source Code: BADNET
 - Contract Address: [0xBcE1fe6F3E929cCfd38b8d0B585F955A7e5cFA48](https://goerli.etherscan.io/address/0xbce1fe6f3e929ccfd38b8d0b585f955a7e5cfa48)
-- Deployment Date: November 6, 2022
+- Deployment Date: November 6th, 2022
 - Number of Relays: 12
 - Descriptor's Upload Period: 5 minutes
 
-Update records:
+Update records (BADNET-0.3):
 - Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
-- Deployment Date: August 15, 2021
-- Status: discontinued operations as of October 5, 2022
+- Ethereum: the Ropsten Testnet (already discontinued in October 2022)
+- Deployment Date: August 15th, 2021
+- Status: discontinued on October 5th, 2022
 - Total Number of transactions: 9,204
 
 ### Others
