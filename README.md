@@ -27,10 +27,9 @@ The prototype system is still being continuously updated, and information about 
 Update records:
 - Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
 - Deployment Date: August 15, 2021
-- Status: discontinued operations as of September 30, 2022
+- Status: discontinued operations as of October 5, 2022
 - Total Number of transactions: 9,204
 
 ### Others
-- Goerli Faucet: [Faucet1](https://goerli-faucet.pk910.de/)
- or [Faucet2](https://goerliethfaucet.xyz/)
+- Goerli Faucet: [FAUCETLINK](https://faucetlink.to/goerli)
 - [Goerli Testnet Explorer](https://goerli.etherscan.io/)
