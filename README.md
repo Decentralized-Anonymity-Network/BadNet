@@ -32,4 +32,4 @@ Update records:
 
 ### Others
 - Goerli Faucet: [FAUCETLINK](https://faucetlink.to/goerli)
-- [Goerli Testnet Explorer](https://goerli.etherscan.io/)
+- Goerli Testnet Explorer: [Etherscan](https://goerli.etherscan.io/)
