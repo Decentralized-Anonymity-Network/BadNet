@@ -7,36 +7,30 @@ The project is a decentralized anonymity network based on onion routing and bloc
 ### BADNET-1.0
 BADNET (version 1.0) is build on top of Tor version 0.4.6.5 and the Goerli Ethereum Testnet. The onion routing technique is derived from the Tor source code, but BADNET hides the Tor Directory Authority (DirAuth) behind an Ethereum system. More concretely, directory services are not provided directly by the DirAuth, but are supported through an Ethereum smart contract (SC) written in Solidity. The code for the directory contract is in *DirectoryContract.sol*. We also provide a patch file *badnet.patch* for readers to track our changes to the Tor code.
 
-### Function
-The project focuses on improving the directory functionality of the Tor network, and the main improvements include:
-1. Use smart contracts to reconstruct the core functions of Tor directory authority to realize a decentralized directory authority (DDA).
-2. Relays upload server descriptors to DDA, and clients fetch directories from DDA.
-3. Add some auxiliary functions on the basis of Tor (e.g., entity registration, random directory, data protection) to improve the system's resistance to directory attacks.
-
 ### Setup
-1. The client and relay have their own setup documents, respectively.
-2. The code of DDA needs to be deployed on the Ethereum blockchain. Considering the cost of the system, it is recommended to deploy DDA on the Ropsten Ethereum Testnet, and the required transaction fees can be obtained through the "ETH Faucet".
+1. The client and relay have their own setup documents, respectively (see the folder *Setup*).
+2. The code of the SC needs to be deployed on an Ethereum blockchain. We currently deploy the SC on the Goerli Testnet and the required transaction fees can be obtained through the "ETH Faucet".
 
 ### Test method 1: Build your own private anonymity network
-Users can download the source code and deploy their own DDA and relays to build a private anonymity network.
+Users can download the source code and then build a private anonymity network by creating their own smart contracts and running a number of relays.
 
-### Test method 2: Use the anonymous network system built by the project team
-The project is currently maintaining a small anonymity network, including smart contract-based DDA that provides directory services, onion routers that provides relay services, and the client program for testing the network functionality.
+### Test method 2: Use the anonymity network built by our team
+Our project is currently maintaining a small-scale anonymity network, including a smart contract that provides directory services, onion routers that provides relay services, and the client program for testing the network functionality.
 
 The prototype system is still being continuously updated, and information about the currently available system is as follows:
-- Source Code: BADNet
-- DDA’s Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
-- Deployment Date: August 15, 2021
+- Source Code: BADNET
+- Contract Address: [0xBcE1fe6F3E929cCfd38b8d0B585F955A7e5cFA48](https://goerli.etherscan.io/address/0xbce1fe6f3e929ccfd38b8d0b585f955a7e5cfa48)
+- Deployment Date: November 6, 2022
 - Number of Relays: 12
-- Descriptor's Upload Period: 1 hour
+- Descriptor's Upload Period: 5 minutes
 
-DDA update records:
-- Contract Address: [0x1ed3b4ae0bcf62164a2622e3d357c68f09bc0fc4](https://ropsten.etherscan.io/address/0x1ed3b4ae0bcf62164a2622e3d357c68f09bc0fc4)
-- Deployment Date: August 10, 2021
-- Status: discontinued operations as of August 15, 2021
-- Total Number of transactions: 5,608
+Update records:
+- Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
+- Deployment Date: August 15, 2021
+- Status: discontinued operations as of September 30, 2022
+- Total Number of transactions: 9,204
 
 ### Others
-- Ropsten Ethereum (rETH) Faucet: [Faucet1](https://faucet.dimensions.network/)
- or [Faucet2](https://teth.bitaps.com/)
-- [Ropsten Testnet Explorer](https://ropsten.etherscan.io/)
+- Goerli Faucet: [Faucet1](https://goerli-faucet.pk910.de/)
+ or [Faucet2](https://goerliethfaucet.xyz/)
+- [Goerli Testnet Explorer](https://goerli.etherscan.io/)
