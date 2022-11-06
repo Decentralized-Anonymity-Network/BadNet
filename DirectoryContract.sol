@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-contract Directory_v3{
+contract DirectoryContract_v3{
     
     address owner;
     uint RelayUploadPeriod = 5; // 5 minutes
