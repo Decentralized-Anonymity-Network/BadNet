@@ -2,14 +2,14 @@
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-contract DirectoryContract_v3{
+contract DirectoryContract_V3{
     
     address owner;
     uint RelayUploadPeriod = 5; // 5 minutes
     uint16 relayIndex = 1;
     uint16[] public unhealthyRelaySet;
     uint8 CurrentCounter = 1;
-    mapping (uint8 => bytes) CounterList;
+    mapping (uint8 => uint16[]) CounterList;
     
     struct Relay{
         bool registered;
@@ -57,9 +57,9 @@ contract DirectoryContract_v3{
         return RelayUploadPeriod;
     }
 
-    // Relay gets the index of unhealthy relays to obtain a subset S of relays used for broadcast encryption.
-    function relay_get_unhealthy_index() view public returns(uint16[] memory) {
-        return unhealthyRelaySet;
+    // Relay gets the subset S of relays used for broadcast encryption.
+    function relay_get_index_set() view public returns(uint16, uint16[] memory) {
+        return (relayIndex, unhealthyRelaySet);
     }
 
     // Relay gets the current counter. 
@@ -89,6 +89,12 @@ contract DirectoryContract_v3{
         require(relay[i].healthflag == true);
         return(relay[i].counter, relay[i].Hdr, relay[i].encryptedSRI);
     }
+
+    // Relay gets the historical version of counter.
+    function relay_get_counter_list(uint8 i) view public returns(uint16[] memory) {
+        require(relay[relayaddr[msg.sender]].registered == true);
+        return CounterList[i];
+    }
  
     // Relay cancellation.
     function relay_cancellation() public {
@@ -114,34 +120,39 @@ contract DirectoryContract_v3{
     // Manager Method
     // ************************
     
-    //Get the current index number.
+    // Get the current index number.
     function getrelayIndex() view public returns(uint16) {
         require(msg.sender == owner);
         return relayIndex;
     }
     
-    //Set relay SRI upload period (in minutes).
+    // Set relay SRI upload period (in minutes).
     function setSRIperiod(uint period) public {
         require(msg.sender == owner);
         RelayUploadPeriod = period;
     }
     
-    //Get the information about one relay.
+    // Get the information about one relay.
     function getinfo(uint16 i) view public returns(uint8, bytes memory, bytes memory, bytes memory) {
         require(msg.sender == owner);
         return (relay[i].counter, relay[i].Hdr, relay[i].encryptedSRI, relay[i].NSD);
     } 
     
-    //Get healthflag of a relay.
+    // Get healthflag of a relay.
     function getRelayFlag(uint16 i) view public returns(bool) {
         require(msg.sender == owner);
         return relay[i].healthflag;
     }
 
-    //Actively modify healthflag of an unhealthy relay to *FALSE*.
-    function modifyRelayFlag(uint16 i) public {
+    // Actively modify healthflag of an unhealthy relay to *FALSE*.
+    function modifyHealthFlag(uint16 size, uint16[] memory list) public {
         require(msg.sender == owner);
-        relay[i].healthflag = false;
-        unhealthyRelaySet.push(i);
+        for(uint16 i=0; i<size; i++) {
+            require(relay[list[i]].healthflag == true);
+            relay[list[i]].healthflag = false;
+            unhealthyRelaySet.push(list[i]);
+        }
+        CounterList[CurrentCounter] = list;
+        CurrentCounter++;
     }
 }
