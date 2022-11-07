@@ -22,7 +22,7 @@ The prototype system is still being continuously updated, and information about 
 - Contract Address: [0x0BfDD5324d646133A0005952C0298665c696BB16](https://goerli.etherscan.io/address/0x0bfdd5324d646133a0005952c0298665c696bb16)
 - Deployment Date: November 7th, 2022
 - Number of Relays: 12
-- Descriptor's Upload Period: 5 minutes
+- Descriptor's Upload Period: 1 hour
 
 Update records (BADNET-0.3):
 - Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
