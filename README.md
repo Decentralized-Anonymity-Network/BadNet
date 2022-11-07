@@ -26,7 +26,7 @@ The prototype system is still being continuously updated, and information about 
 
 Update records (BADNET-0.3):
 - Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
-- Ethereum: the Ropsten Testnet (already discontinued in October 2022)
+- Ethereum: Ropsten Testnet (already discontinued in October 2022)
 - Deployment Date: August 15th, 2021
 - Status: discontinued on October 5th, 2022
 - Total Number of transactions: 9,204
