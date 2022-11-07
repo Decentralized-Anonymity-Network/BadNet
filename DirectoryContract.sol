@@ -105,7 +105,7 @@ contract DirectoryContractV3{
     
     
     // ************
-    // Client
+    // Client Method
     // ************
     
     // Client downloads NSD (Loop download).
