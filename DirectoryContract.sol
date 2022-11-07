@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 contract DirectoryContractV3{
     
     address owner;
-    uint RelayUploadPeriod = 5; // 5 minutes
+    uint RelayUploadPeriod = 60; // 1 hour
     uint16 relayIndex = 1;
     uint16[] public unhealthyRelaySet;
     uint8 CurrentCounter = 1;
