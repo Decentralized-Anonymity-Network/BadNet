@@ -34,11 +34,11 @@ contract DirectoryContractV3{
     // ************************
     
     // Relay registration check.
-    function relay_registration_check() public view returns(uint) {
+    function relay_registration_check() public view returns(bool) {
         if(relay[relayaddr[msg.sender]].registered == true) {
-            return 1;
+            return true;
         } else {
-            return 0;
+            return false;
         }
     }
     
@@ -54,16 +54,19 @@ contract DirectoryContractV3{
     
     // Relay gets SRI upload period (in minutes). 
     function relay_get_upload_period() view public returns(uint) {
+        require(relay[relayaddr[msg.sender]].registered == true);
         return RelayUploadPeriod;
     }
 
     // Relay gets the subset S of relays used for broadcast encryption.
     function relay_get_index_set() view public returns(uint16, uint16[] memory) {
+        require(relay[relayaddr[msg.sender]].registered == true);
         return (relayIndex, unhealthyRelaySet);
     }
 
     // Relay gets the current counter. 
     function relay_get_current_counter() view public returns(uint8) {
+        require(relay[relayaddr[msg.sender]].registered == true);
         return CurrentCounter;
     }
 
@@ -85,15 +88,20 @@ contract DirectoryContractV3{
 
     // Relay downloads SRI (Loop download).
     function relay_download_SRI(uint16 i) view public returns(uint8, bytes memory, bytes memory) {
-        require(i < relayIndex);
-        require(relay[i].healthflag == true);
+        require(relay[relayaddr[msg.sender]].registered == true);
+        require(i < relayIndex && relay[i].healthflag == true);
         return(relay[i].counter, relay[i].Hdr, relay[i].encryptedSRI);
     }
 
-    // Relay gets the historical version of counter.
-    function relay_get_counter_list(uint8 i) view public returns(uint16[] memory) {
+    // Relay gets the historical list of counter.
+    function relay_get_counter_list(uint8 counter) view public returns(uint16[][] memory) {
         require(relay[relayaddr[msg.sender]].registered == true);
-        return CounterList[i];
+        require(counter < CurrentCounter);
+        uint16[][] memory addSet = new uint16[][](CurrentCounter-counter);
+        for(uint8 i=counter; i<CurrentCounter; i++) {
+            addSet[CurrentCounter-i-1] = CounterList[i];
+        }
+        return addSet;
     }
  
     // Relay cancellation.
@@ -108,11 +116,20 @@ contract DirectoryContractV3{
     // Client Method
     // ************
     
-    // Client downloads NSD (Loop download).
-    function client_download_NSD(uint16 i) view public returns(bytes memory) {
-        require(i < relayIndex);
-        require(relay[i].healthflag == true);
-        return relay[i].NSD;
+    // Client downloads NSD.
+    function client_download_NSD() view public returns(bool[] memory, bytes memory) {
+        bool[] memory NSDIndex = new bool[](relayIndex-1);
+        bytes memory NSDbytes;
+        for(uint16 i=1; i<relayIndex; i++) {
+            if(relay[i].healthflag == true) {
+                NSDIndex[i-1] = true;
+                NSDbytes = abi.encodePacked(NSDbytes, relay[i].NSD);
+            }
+            else {
+                NSDIndex[i] = false;
+            }
+        }
+        return (NSDIndex, NSDbytes);
     }        
     
 
@@ -120,18 +137,18 @@ contract DirectoryContractV3{
     // Manager Method
     // ************************
     
-    // Get the current index number.
-    function getrelayIndex() view public returns(uint16) {
-        require(msg.sender == owner);
-        return relayIndex;
-    }
-    
     // Set relay SRI upload period (in minutes).
     function setSRIperiod(uint period) public {
         require(msg.sender == owner);
         RelayUploadPeriod = period;
     }
-    
+
+    // Get the current index number.
+    function getrelayIndex() view public returns(uint16) {
+        require(msg.sender == owner);
+        return relayIndex;
+    }
+
     // Get the information about one relay.
     function getinfo(uint16 i) view public returns(uint8, bytes memory, bytes memory, bytes memory) {
         require(msg.sender == owner);
@@ -139,7 +156,7 @@ contract DirectoryContractV3{
     } 
     
     // Get healthflag of a relay.
-    function getRelayFlag(uint16 i) view public returns(bool) {
+    function getHealthFlag(uint16 i) view public returns(bool) {
         require(msg.sender == owner);
         return relay[i].healthflag;
     }
