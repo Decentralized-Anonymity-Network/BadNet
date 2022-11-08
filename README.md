@@ -17,7 +17,7 @@ Users can download the source code and then build a private anonymity network by
 ### Test method 2: Use the anonymity network built by our team
 Our project is currently maintaining a small-scale anonymity network, including a smart contract that provides directory services, onion routers that provides relay services, and the client program for testing the network functionality.
 
-The prototype system is still being continuously updated, and information about the currently available system is as follows:
+The prototype system is still being tested and continuously updated. Details of the current system are as follows:
 - Source Code: BADNET
 - Contract Address: [0xe7BC117CE3439e32549115f049d3D17A17EC03c8](https://goerli.etherscan.io/address/0xe7bc117ce3439e32549115f049d3d17a17ec03c8)
 - Deployment Date: November 8th, 2022
