@@ -7,8 +7,8 @@ from web3 import Web3, HTTPProvider
 import contract_abi
 
 
-contract_address = "0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D"
-web3 = Web3(HTTPProvider("https://ropsten.infura.io/v3/f082b3f35d3a415b991b852a4ed0dccb"))
+contract_address = "0xe7BC117CE3439e32549115f049d3D17A17EC03c8"
+web3 = Web3(HTTPProvider("https://goerli.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
 contract_instance = web3.eth.contract(address=contract_address, abi=contract_abi.abi)
 
 
@@ -28,36 +28,13 @@ def create_account(path):
     print(wallet_addr)
 
 
-def client_get_update_period():
-    return contract_instance.functions.client_get_update_period().call()
-
-
 def relay_get_upload_period():
     return contract_instance.functions.relay_get_upload_period().call()
 
 
-def main(argv):
-    if argv[1] == 'client':
-        path = '/usr/local/BADNet-client/'
-        create_account(path + 'SC/account.py')
-        """
-        ClientUpdatePeriod = client_get_update_period()
-        with open(path + 'BADNet.client', mode='a') as filename:
-            filename.write('\n' + 'ClientUpdatePeriod ' + str(ClientUpdatePeriod))
-        """
-
-    elif argv[1] == 'relay':
-        path = '/usr/local/BADNet-relay/'
-        create_account(path + 'SC/account.py')
-        """
-        RelayUploadPeriod = relay_get_upload_period()
-        with open(path + 'BADNet.relay', mode='a') as filename:
-            filename.write('\n' + 'RelayUploadPeriod ' + str(RelayUploadPeriod))
-        """
-
-    else:
-        print('Argument error!')
-
-
 if __name__ == '__main__':
-     main(sys.argv)
+    path = '/usr/local/BADNET-V3-relay/'
+    create_account(path + 'SC/account.py')
+    RelayUploadPeriod = relay_get_upload_period()
+    with open(path + 'BADNET.relay', mode='a') as filename:
+        filename.write('\n' + 'RelayUploadPeriod ' + str(RelayUploadPeriod))

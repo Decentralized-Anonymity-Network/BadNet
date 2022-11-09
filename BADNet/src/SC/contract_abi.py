@@ -1,140 +1,4 @@
-true = True
-false = False
-
 abi = [
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"stateMutability": "payable",
-		"type": "fallback"
-	},
-	{
-		"inputs": [],
-		"name": "client_cancellation",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "client_delete_random_index",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "i",
-				"type": "uint256"
-			}
-		],
-		"name": "client_download_MSRI",
-		"outputs": [
-			{
-				"internalType": "bytes",
-				"name": "",
-				"type": "bytes"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "i",
-				"type": "uint256"
-			}
-		],
-		"name": "client_download_encrypted_keys",
-		"outputs": [
-			{
-				"internalType": "bytes",
-				"name": "",
-				"type": "bytes"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "client_generate_random_index",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "client_get_RIAlength",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "client_get_current_RIA_length",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "client_get_update_period",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes",
-				"name": "str",
-				"type": "bytes"
-			}
-		],
-		"name": "client_register",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "client_registration_check",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
 	{
 		"inputs": [
 			{
@@ -151,36 +15,102 @@ abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "Addr",
-				"type": "address"
-			}
-		],
-		"name": "getClientFlag",
-		"outputs": [
+				"internalType": "uint16",
+				"name": "size",
+				"type": "uint16"
+			},
 			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
+				"internalType": "uint16[]",
+				"name": "list",
+				"type": "uint16[]"
 			}
 		],
-		"stateMutability": "view",
+		"name": "modifyHealthFlag",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "relay_cancellation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "relay_register",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "addr",
-				"type": "address"
+				"internalType": "uint8",
+				"name": "_counter",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_Hdr",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_encryptedSRI",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_NSD",
+				"type": "bytes"
 			}
 		],
-		"name": "getRIA",
+		"name": "relay_upload_SRI_and_NSD",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "period",
+				"type": "uint256"
+			}
+		],
+		"name": "setSRIperiod",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "fallback"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
+	},
+	{
+		"inputs": [],
+		"name": "client_download_NSD",
 		"outputs": [
 			{
-				"internalType": "uint16[]",
+				"internalType": "bool[]",
 				"name": "",
-				"type": "uint16[]"
+				"type": "bool[]"
+			},
+			{
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
 			}
 		],
 		"stateMutability": "view",
@@ -194,25 +124,12 @@ abi = [
 				"type": "uint16"
 			}
 		],
-		"name": "getRelayFlag",
+		"name": "getHealthFlag",
 		"outputs": [
 			{
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getclientNum",
-		"outputs": [
-			{
-				"internalType": "uint24",
-				"name": "",
-				"type": "uint24"
 			}
 		],
 		"stateMutability": "view",
@@ -228,6 +145,21 @@ abi = [
 		],
 		"name": "getinfo",
 		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
+			},
 			{
 				"internalType": "bytes",
 				"name": "",
@@ -253,56 +185,23 @@ abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "Addr",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "flag",
-				"type": "bool"
-			}
-		],
-		"name": "modifyClientFlag",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "uint16",
 				"name": "i",
 				"type": "uint16"
+			}
+		],
+		"name": "relay_download_SRI",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
 			},
 			{
-				"internalType": "bool",
-				"name": "flag",
-				"type": "bool"
-			}
-		],
-		"name": "modifyRelayFlag",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "relay_cancellation",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "i",
-				"type": "uint256"
-			}
-		],
-		"name": "relay_download_clients_public_keys",
-		"outputs": [
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
+			},
 			{
 				"internalType": "bytes",
 				"name": "",
@@ -313,13 +212,50 @@ abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "relay_get_clientlist_length",
+		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "counter",
+				"type": "uint8"
+			}
+		],
+		"name": "relay_get_counter_list",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "uint16[][]",
 				"name": "",
-				"type": "uint256"
+				"type": "uint16[][]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "relay_get_current_counter",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "relay_get_index_set",
+		"outputs": [
+			{
+				"internalType": "uint16",
+				"name": "",
+				"type": "uint16"
+			},
+			{
+				"internalType": "uint16[]",
+				"name": "",
+				"type": "uint16[]"
 			}
 		],
 		"stateMutability": "view",
@@ -340,19 +276,12 @@ abi = [
 	},
 	{
 		"inputs": [],
-		"name": "relay_register",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "relay_registration_check",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "bool",
 				"name": "",
-				"type": "uint256"
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -361,90 +290,20 @@ abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "bytes",
-				"name": "info",
-				"type": "bytes"
-			},
-			{
 				"internalType": "uint256",
-				"name": "num",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes[]",
-				"name": "keys",
-				"type": "bytes[]"
-			}
-		],
-		"name": "relay_upload_SRI_and_keys",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "i",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "num",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes[]",
-				"name": "keys",
-				"type": "bytes[]"
-			}
-		],
-		"name": "relay_upload_keys",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "num",
-				"type": "uint8"
-			}
-		],
-		"name": "setRIAlength",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "period",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "setRIAperiod",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+		"name": "unhealthyRelaySet",
+		"outputs": [
 			{
-				"internalType": "uint256",
-				"name": "period",
-				"type": "uint256"
+				"internalType": "uint16",
+				"name": "",
+				"type": "uint16"
 			}
 		],
-		"name": "setSRIperiod",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"stateMutability": "payable",
-		"type": "receive"
 	}
 ]
