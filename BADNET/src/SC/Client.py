@@ -16,13 +16,11 @@ def clientDownloadNSD():
     if os.path.exists(filePath):
         os.remove(filePath)
 
-    NSDIndex, _NSD = contract_instance.functions.client_download_NSD().call({'from': account.wallet_addr})
+    bytesLocal = 0
+    NSDIndex, _NSD = contract_instance.functions.client_download_NSD().call()
     NSD = binascii.hexlify(_NSD)
-
-    local = 0
     for relayID in range(0, len(NSDIndex)):
         if NSDIndex[relayID]:
             with open(filePath, mode='a') as filename:
-                filename.write(relayID +'\n')
-                filename.write(NSD[local*64:(local+1)*64] +'\n')
-                local += 1
+                filename.write(relayID + ' ' + NSD[bytesLocal*64:(bytesLocal+1)*64] + '\n')
+                bytesLocal += 1

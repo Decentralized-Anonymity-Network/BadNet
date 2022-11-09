@@ -149,7 +149,7 @@ def relayDownloadSRI():
             for j in range(0, len(addSet)):
                 S += addSet[j]
         with open(filePath, mode='a') as filename:
-            filename.write(relayID +'\n')
+            filename.write(relayID + '\n')
             filename.write(S + '\n')
             filename.write(relayHdr + '\n')
             filename.write(relayEnSRI + '\n')
