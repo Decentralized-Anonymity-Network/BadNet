@@ -18,7 +18,7 @@ AES_CBC_IV = b'qqqqqqqqqqqqqqqq'
 path = '/usr/local/BADNET-V3-relay/'
 
 
-# ============ 注册 ============
+# ============ Registration ============
 
 def relayRegistrationCheck():
     return contract_instance.functions.relay_registration_check().call({'from': account.wallet_addr})
@@ -45,7 +45,7 @@ def relayRegister():
     return txn_receipt
 
 
-# ============ 获取健康节点集合S（用于加/解密） ============
+# ============ Fetch the set of healthy relays (for encryption/decryption) ============
 
 def relayGetIndexSet():
     return contract_instance.functions.relay_get_index_set().call({'from': account.wallet_addr})
@@ -65,7 +65,7 @@ def relayGetSet():
     return Counter, relaySet
 
 
-# ============ 加密SRI&上传 ============
+# ============ SRI Encryption & Upload ============
 
 def padding(text):
     block_size = 16
@@ -118,7 +118,7 @@ def relayUploadSRIAndNSD(_Counter, _HDR, _SRI, Key):
     return txn_receipt
 
 
-# ============ 下载NIME&解密 ============
+# ============ NIME Download & Decryption ============
 
 def relayGetCounterList(index):
     return contract_instance.functions.relay_get_counter_list(index).call({'from': account.wallet_addr})
