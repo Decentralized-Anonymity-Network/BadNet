@@ -4443,7 +4443,7 @@ am__noinst_HEADERS_DIST = src/ext/ht.h src/ext/byteorder.h \
 	src/feature/relay/relay_handshake.h \
 	src/feature/relay/relay_periodic.h \
 	src/feature/relay/relay_sys.h \
-	src/feature/relay/relay_find_addr.h src/feature/relay/router.h \
+	src/feature/relay/relay_find_addr.h src/feature/relay/router.h src/feature/relay/bkem.h \
 	src/feature/relay/routerkeys.h src/feature/relay/routermode.h \
 	src/feature/relay/selftest.h \
 	src/feature/relay/transport_config.h \
@@ -5494,7 +5494,7 @@ noinst_HEADERS = $(EXTHEADERS) $(ED25519_REF10_HDRS) \
 	src/feature/relay/relay_handshake.h \
 	src/feature/relay/relay_periodic.h \
 	src/feature/relay/relay_sys.h \
-	src/feature/relay/relay_find_addr.h src/feature/relay/router.h \
+	src/feature/relay/relay_find_addr.h src/feature/relay/router.h src/feature/relay/bkem.h \
 	src/feature/relay/routerkeys.h src/feature/relay/routermode.h \
 	src/feature/relay/selftest.h \
 	src/feature/relay/transport_config.h \
