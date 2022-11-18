@@ -1252,7 +1252,7 @@ tor_zlib_pkg_debian="zlib1g"
 tor_zlib_devpkg_redhat="zlib-devel"
 tor_zlib_devpkg_debian="zlib1g-dev"
 
-TOR_SEARCH_LIBRARY(zlib, $tryzlibdir, [-lz -lpython3.6],
+TOR_SEARCH_LIBRARY(zlib, $tryzlibdir, [-lz -lpython3.6 -lgmp -lpbc],
     [#include <zlib.h>],
     [const char * zlibVersion(void);],
     [zlibVersion();], [--with-zlib-dir],
@@ -1266,7 +1266,7 @@ if test "$enable_static_zlib" = "yes"; then
      TOR_ZLIB_LIBS="$TOR_LIBDIR_zlib/libz.a"
    fi
 else
-     TOR_ZLIB_LIBS="-lz -lpython3.6"
+     TOR_ZLIB_LIBS="-lz -lpython3.6 -lgmp -lpbc"
 fi
 AC_SUBST(TOR_ZLIB_LIBS)
 
