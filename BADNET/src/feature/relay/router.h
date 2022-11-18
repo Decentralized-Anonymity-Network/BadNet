@@ -14,6 +14,11 @@
 
 #include "lib/testsupport/testsupport.h"
 
+// ************
+// BADNET
+// ************
+#include "feature/relay/bkem.h"
+
 struct curve25519_keypair_t;
 struct ed25519_keypair_t;
 
@@ -104,7 +109,7 @@ bool router_addr_is_my_published_addr(const tor_addr_t *addr);
 int router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e);
 
 // ************
-// BADNet
+// BADNET
 // ************
 // bool router_rebuild_descriptor(int force);
 bool router_rebuild_descriptor(int force, int flag);
