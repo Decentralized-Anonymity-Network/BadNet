@@ -38,8 +38,8 @@ sudo ./configure
 sudo make
 ```
 
-Get rETH (Ropsten Ethereum) with generated address from
-[Faucet1](https://faucet.dimensions.network/), [Faucet2](https://teth.bitaps.com/), or [Faucet3](https://faucet.ropsten.be/).
+Get ETH (Ethereum Goerli Testnet) with generated address from 
+[Faucet1](https://ethdrop.dev/), [Faucet2](https://www.allthatnode.com/faucet/ethereum.dsrv), or [Faucet3](https://goerli-faucet.pk910.de/).
 
 #### Running BADNet relay:
 ```bat
