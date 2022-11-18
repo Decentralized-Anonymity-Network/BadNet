@@ -2,26 +2,30 @@ from web3 import Web3, HTTPProvider
 import contract_abi
 import account
 
+import os
 import time
 import binascii
 import hashlib
 import zlib
+import re
 from Crypto.Cipher import AES
 import secrets
 from ecies import encrypt
-import os
-import linecache
 
 web3 = Web3(HTTPProvider("https://goerli.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
 contract_instance = web3.eth.contract(address=account.contract_address, abi=contract_abi.abi)
 AES_CBC_IV = b'qqqqqqqqqqqqqqqq'
 path = '/usr/local/BADNET-V3-relay/'
 
+Counter = 1
+relaySet = []
+
 
 # ============ Registration ============
 
 def relayRegistrationCheck():
-    return contract_instance.functions.relay_registration_check().call({'from': account.wallet_addr})
+    flag = contract_instance.functions.relay_registration_check().call({'from': account.wallet_addr})
+    return 1 if flag else 0
 
 
 def relayRegister():
@@ -30,7 +34,7 @@ def relayRegister():
         {
             'chainId': 5,
             'nonce': web3.eth.getTransactionCount(account.wallet_addr),
-            'gas': 1000000,
+            'gas': 3000000,
             'value': Web3.toWei(0, 'ether'),
             'gasPrice': web3.eth.gasPrice,
         }
@@ -57,10 +61,12 @@ def relayGetCurrentCounter():
 
 def relayGetSet():
     relayTotalNum, UnhealthySet = relayGetIndexSet()
+    global relaySet
     relaySet = []
     for i in range(1, relayTotalNum):
         if i not in UnhealthySet:
             relaySet.append(i)
+    global Counter
     Counter = relayGetCurrentCounter()
     return Counter, relaySet
 
@@ -87,17 +93,18 @@ def AES_encrypt(plain_text, key):
     return binascii.hexlify(cipher_text)
 
 
-def relayUploadSRIAndNSD(_Counter, _HDR, _SRI, Key):
+def relayUploadSRIAndNSD(_Counter, Hdr, SRI, Key):
+    _HDR = "0x" + Hdr
     AES_key = Key[0:32].encode('utf-8')
-    _NSD = hashlib.sha256(_SRI.encode()).hexdigest()
-    encryptedSRI = binascii.unhexlify(AES_encrypt(_SRI, AES_key))
+    _enSRI = "0x" + AES_encrypt(SRI, AES_key).decode()
+    _NSD = "0x" + hashlib.sha256(SRI.encode()).hexdigest()
 
     start = time.time()
-    txn = contract_instance.functions.relay_upload_SRI_and_NSD(_Counter, _HDR, encryptedSRI, _NSD).buildTransaction(
+    txn = contract_instance.functions.relay_upload_SRI_and_NSD(_Counter, _HDR, _enSRI, _NSD).buildTransaction(
         {
             'chainId': 5,
             'nonce': web3.eth.getTransactionCount(account.wallet_addr),
-            'gas': 1000000,
+            'gas': 3000000,
             'value': Web3.toWei(0, 'ether'),
             'gasPrice': web3.eth.gasPrice,
         }
@@ -106,8 +113,8 @@ def relayUploadSRIAndNSD(_Counter, _HDR, _SRI, Key):
     result = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
     txn_receipt = ""
     try:
-        txn_receipt = web3.eth.waitForTransactionReceipt(result, timeout=600)
-    except Exception as e:
+        txn_receipt = web3.eth.waitForTransactionReceipt(result, timeout=300)
+    except TimeoutError:
         with open(path + 'log/blockchain.log', mode='a') as filename:
             filename.write('Timeout\n')
     else:
@@ -118,41 +125,26 @@ def relayUploadSRIAndNSD(_Counter, _HDR, _SRI, Key):
     return txn_receipt
 
 
-# ============ NIME Download & Decryption ============
+# ============ SRI Download & Decryption  ============
 
 def relayGetCounterList(index):
     return contract_instance.functions.relay_get_counter_list(index).call({'from': account.wallet_addr})
 
 
 def relayDownloadSRIHelper(index):
-    try:
-        counter, HdrTemp, encrypted_SRI = contract_instance.functions.relay_download_SRI(index).call({'from': account.wallet_addr})
-        _Hdr = zlib.decompress(HdrTemp).decode()
-        enSRI = binascii.hexlify(encrypted_SRI)
-    except BaseException:
-        return bytearray(b'')
-    else:
-        return counter, _Hdr, bytearray(enSRI)
+    counter, Hdr, enSRI = contract_instance.functions.relay_download_SRI(index).call({'from': account.wallet_addr})
+    return counter, Hdr.hex(), enSRI.hex()
 
 
-def relayDownloadSRI():
-    filePath = path + 'lib/NIME-enc'
-    if os.path.exists(filePath):
-        os.remove(filePath)
-
-    Counter, relaySet = relayGetSet()
-    for relayID in relaySet:
-        relayCounter, relayHdr, relayEnSRI = relayDownloadSRIHelper(relayID)
-        S = relaySet        
-        if relayCounter < Counter:
-            addSet = relayGetCounterList(relayCounter)
-            for j in range(0, len(addSet)):
-                S += addSet[j]
-        with open(filePath, mode='a') as filename:
-            filename.write(relayID + '\n')
-            filename.write(S + '\n')
-            filename.write(relayHdr + '\n')
-            filename.write(relayEnSRI + '\n')
+def relayDownloadSRI(relayID):
+    relayCounter, Hdr, relayEnSRI = relayDownloadSRIHelper(relayID)
+    S = relaySet
+    if relayCounter < Counter:
+        addSet = relayGetCounterList(relayCounter)
+        for j in range(0, len(addSet)):
+            S += addSet[j]
+    relayHdr = re.findall(r'.{130}', Hdr)
+    return S, relayHdr, relayEnSRI
 
 
 def AES_decrypt(cipher_text, key):
@@ -163,17 +155,13 @@ def AES_decrypt(cipher_text, key):
     return bytes.decode(plain_text).rstrip('\0')
 
 
-def relayDecryptNIME(sum, decKey):
-    for num in range(1, sum+1):
-        AES_Key = bytes(decKey[num-1][0:32].encode())
-        relayID = linecache.getline(path + 'lib/NIME-enc', num*4-3).strip()
-        enSRI = linecache.getline(path + 'lib/NIME-enc', num*4).strip()
-        _SRI = AES_decrypt(enSRI, AES_Key)
-        with open(path + 'lib/NIME-cached', mode='a') as filename:
-            filename.write(relayID + '\n')
-            filename.write(_SRI + '\n')
-    
-    filePath = path + 'lib/NIME'
-    if os.path.exists(filePath):
-        os.remove(filePath)
-    os.rename(path + 'lib/NIME-cached', filePath)
+def relayDecryptSRIs(relayID, enSRI, decKey, fileEnd):
+    AES_Key = bytes(decKey[0:32].encode())
+    _SRI = AES_decrypt(enSRI, AES_Key)
+    with open('NIME-cached', mode='a') as filename:
+        filename.write(str(relayID) + '\n')
+        filename.write(_SRI + '\n')
+    if fileEnd == 1:
+        if os.path.exists('NIME'):
+            os.remove('NIME')
+        os.rename("NIME-cached", "NIME")
