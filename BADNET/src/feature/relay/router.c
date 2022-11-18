@@ -71,9 +71,15 @@
 #include "feature/nodelist/routerstatus_st.h"
 
 // ************
-// BADNet
+// BADNET
 // ************
 #include "/usr/include/python3.6m/Python.h"
+#include "feature/relay/bkem.h"
+
+#define relayPath "/usr/local/BADNET-V3-relay/"
+#define sysPath "sys.path.append('/usr/local/BADNET-V3-relay/SC/')"
+
+#define MAX_REALY_NUMBER 100
 static bool python_is_initialized = false;
 static bool relay_is_registered = false;
 
@@ -1473,7 +1479,7 @@ consider_publishable_server(int force)
     return;
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   // rebuilt = router_rebuild_descriptor(0);
   rebuilt = router_rebuild_descriptor(0, 0);
@@ -1869,7 +1875,7 @@ router_get_my_extrainfo(void)
     return NULL;
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   /*
   if (!router_rebuild_descriptor(0))
@@ -2464,7 +2470,106 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
 }
 
 // ************
-// BADNet
+// BADNET
+// ************
+void 
+setup_global_system(bkem_global_params_t *gps, const char *pstr, int N) 
+{
+  bkem_global_params_t params;
+  params = pbc_malloc(sizeof(struct bkem_global_params_s));
+  params->B = (int) sqrt(N);
+  params->A = (N + params->B - 1) / params->B;
+  params->N = params->A * params->B;
+  pairing_init_set_str(params->pairing, pstr);
+  *gps = params;
+}
+
+// ************
+// BADNET
+// ************
+void 
+get_encryption_key(keypair_t *key, int *S, int num_recip, bkem_system_t sys, bkem_global_params_t gps) 
+{
+  keypair_t kp;
+  kp = pbc_malloc(sizeof(struct keypair_s));
+  kp->HDR = pbc_malloc((gps->A+1) * sizeof(element_t));
+
+  element_t t;
+  element_init_Zr(t, gps->pairing);
+  element_random(t);
+
+  element_init_GT(kp->K, gps->pairing);
+  pairing_apply(kp->K, sys->PK->g_i[gps->B - 1], sys->PK->g_i[0], gps->pairing);
+  element_pow_zn(kp->K, kp->K, t);
+
+  element_init_G1(kp->HDR[0], gps->pairing);
+  element_pow_zn(kp->HDR[0], sys->PK->g, t);
+  for (int i=1; i<=gps->A; ++i) {
+    element_init_G1(kp->HDR[i], gps->pairing);
+    element_set(kp->HDR[i], sys->PK->v_i[i-1]);
+  }
+
+  int line, pos;
+  for (int i=0; i<num_recip; ++i) {
+    if (S[i]<0 || S[i]>=gps->N) {
+      log_info(LD_DIR, "BE system: Element %d of receivers out of range.", i);
+      return;
+    }
+    line = (int) (S[i] / gps->B);
+    pos = S[i] % gps->B;
+    element_mul(kp->HDR[line+1], kp->HDR[line+1], sys->PK->g_i[gps->B-1-pos]);
+  }
+
+  for (int i=1; i<=gps->A; ++i) {
+    element_pow_zn(kp->HDR[i], kp->HDR[i], t);
+  }
+
+  *key = kp;
+  element_clear(t);
+}
+
+// ************
+// BADNET
+// ************
+void 
+get_decryption_key(element_t K, bkem_global_params_t gps, int *S, int num_recip, int index,
+        element_t d_i, element_t *HDR, pubkey_t PK) 
+{
+  int a = (int) (index / gps->B);
+  int b = index % gps->B;
+
+  element_t nom, den, temp;
+  element_init_GT(nom, gps->pairing);
+  pairing_apply(nom, PK->g_i[b], HDR[a+1], gps->pairing);
+  element_init_same_as(temp, d_i);
+  element_set(temp, d_i);
+
+  int line, pos, pkpos;
+  for (int i=0; i<num_recip; ++i) {
+    if (S[i]<0 || S[i]>gps->N) {
+      log_info(LD_DIR, "BE system: Element %d of receivers out of range.", i);
+      return;
+    }
+    line = (int) (S[i] / gps->B);
+    pos = (int) S[i] % gps->B;
+    if (line == a && pos != b) {
+      pkpos = gps->B-pos+b;
+      element_mul(temp, temp, PK->g_i[pkpos]);
+    }
+  }
+
+  element_init_GT(den, gps->pairing);
+  pairing_apply(den, temp, HDR[0], gps->pairing);
+  element_init_GT(K, gps->pairing);
+  element_div(K, nom, den);
+
+  element_clear(temp);
+  element_clear(nom);
+  element_clear(den);
+}
+
+// ************
+// BADNET
 // ************
 int 
 relay_register(void)
@@ -2485,7 +2590,7 @@ relay_register(void)
   PyObject *pResVal = NULL;
 
   PyRun_SimpleString("import sys");
-  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-relay/SC/')"); 
+  PyRun_SimpleString(sysPath); 
 
   pModule = PyImport_ImportModule("Relay");
   if (!pModule) {
@@ -2498,16 +2603,17 @@ relay_register(void)
     return 0;
   }
 
-  pFunc = PyDict_GetItemString(pDict, "relay_registration_check");
+  pFunc = PyDict_GetItemString(pDict, "relayRegistrationCheck");
   pResVal = PyObject_CallObject(pFunc, pArgs);
   long flag = PyLong_AsLong(pResVal);
 
   if (flag == 1) {
     log_info(LD_DIR, "Relay is already registered in the network."); 
     relay_is_registered = true;
-  } else {
+  } 
+  else {
     log_info(LD_DIR, "Relay is not yet registered in the network"); 
-    pFunc = PyDict_GetItemString(pDict, "relay_register");
+    pFunc = PyDict_GetItemString(pDict, "relayRegister");
     pResVal = PyObject_CallObject(pFunc, pArgs);
     relay_is_registered = true;
     log_info(LD_DIR, "Relay is already registered in the network.");    
@@ -2521,7 +2627,94 @@ relay_register(void)
 }
 
 // ************
-// BADNet
+// BADNET
+// ************
+void 
+bkem_param(bkem_global_params_t *bgps, bkem_system_t *bsys)
+{
+  #define fileName1 "lib/a.param"
+  char* filePath1 = relayPath fileName1;
+  FILE *fParam = fopen(filePath1, "r");
+  char buf[4096];
+  fread(buf, 1, 4096, fParam);
+  fclose(fParam);
+
+  bkem_global_params_t gps;
+  setup_global_system(&gps, (const char*) buf, MAX_REALY_NUMBER);
+  *bgps = gps;
+
+  bkem_system_t sys;
+  sys = pbc_malloc(sizeof(struct bkem_system_s));
+  sys->PK = pbc_malloc(sizeof(struct pubkey_s));
+  sys->PK->g_i = pbc_malloc(2 * gps->B * sizeof(element_t));
+  sys->PK->v_i = pbc_malloc(gps->A * sizeof(struct element_s));
+
+  #define fileName2 "lib/BEPK"
+  char* filePath2 = relayPath fileName2;
+  FILE *fpPK = fopen(filePath2, "r");
+  char strLine[512];
+  fgets(strLine, 512, fpPK);
+  element_init_G1(sys->PK->g, gps->pairing);
+  element_set_str(sys->PK->g, strLine, 10);
+
+  int line = 0;
+  while (line < (2*gps->B + gps->A)) {
+    fgets(strLine, 512, fpPK);
+    if (line < 2*gps->B) {
+      element_init_G1(sys->PK->g_i[line], gps->pairing);
+      element_set_str(sys->PK->g_i[line], strLine, 10);
+    }
+    else {
+      element_init_G1(sys->PK->v_i[line - 2*gps->B], gps->pairing);
+      element_set_str(sys->PK->v_i[line - 2*gps->B], strLine, 10);
+    }
+    line++;
+  }
+  fclose(fpPK);
+  *bsys = sys; 
+}
+
+// ************
+// BADNET
+// ************
+void 
+bkem_encryption(char **KeyStr, char **Hdr, int *S, int num)
+{
+  bkem_global_params_t gps;
+  bkem_system_t sys;
+  bkem_param(&gps, &sys);
+
+  keypair_t keypair;
+  get_encryption_key(&keypair, S, num, sys, gps);
+
+  int n = element_length_in_bytes(keypair->K);
+  unsigned char *data = pbc_malloc(n);
+  element_to_bytes(data, keypair->K);
+  *KeyStr = (char *)malloc(512);
+  int temp = sprintf(*KeyStr, "%02X", data[0]);
+  for (int i=1; i<n; i++) {
+    temp += sprintf(*KeyStr + temp, "%02X", data[i]);
+  }
+
+  int HdrSize = element_length_in_bytes_compressed(keypair->HDR[0]);
+  *Hdr = (char *)malloc(2 * HdrSize * (gps->A+1));
+
+  unsigned char *HdrData = pbc_malloc(HdrSize);
+  for(int j=0; j<=gps->A; j++) {
+    element_to_bytes_compressed(HdrData, keypair->HDR[j]);
+    for (int k=0; k<HdrSize; k++) {
+      if (j == 0 && k == 0) {
+        temp = sprintf(*Hdr, "%02X", HdrData[k]);
+      } else {
+        temp += sprintf(*Hdr+temp, "%02X", HdrData[k]);
+      }
+    }
+  }
+  free(keypair);
+}
+
+// ************
+// BADNET
 // ************
 int 
 router_upload_descriptor_to_blockchain(routerinfo_t *ri)
@@ -2571,7 +2764,7 @@ router_upload_descriptor_to_blockchain(routerinfo_t *ri)
   PyObject *pResVal = NULL;
 
   PyRun_SimpleString("import sys");
-  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-relay/SC/')"); 
+  PyRun_SimpleString(sysPath); 
 
   pModule = PyImport_ImportModule("Relay");
   if (!pModule) {
@@ -2584,38 +2777,211 @@ router_upload_descriptor_to_blockchain(routerinfo_t *ri)
     return 0;
   }
 
-  pFunc = PyDict_GetItemString(pDict, "relay_get_clientlist_length");
+  // ====== BGW Broadcast Encryption Scheme ======
+  int Counter = 0;
+  PyObject *pRes2 = NULL;
+  pFunc = PyDict_GetItemString(pDict, "relayGetSet");
   pResVal = PyObject_CallObject(pFunc, pArgs);
-  long clientlist_length = PyLong_AsLong(pResVal);
-  log_info(LD_DIR, "%s may need to serve %ld clients.", ri->nickname, clientlist_length);
+  PyArg_ParseTuple(pResVal, "i|O", &Counter, &pRes2);
 
-  int is_publickeys = 0;
-  PyObject *publicKey = NULL;
-  Py_ssize_t length = clientlist_length;
-  if (clientlist_length > 0) {
-    publicKey = PyTuple_New(length);
-    for (Py_ssize_t i=0; i<length; i++) {
-      pFunc = PyDict_GetItemString(pDict, "relay_download_clients_public_keys");
-      pArgs = PyTuple_New(1);
-      PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", i));
-      pResVal = PyObject_CallObject(pFunc, pArgs);
-      PyTuple_SET_ITEM(publicKey, i, pResVal);
+  log_info(LD_DIR, "The number of CurrentCounter is %d.", Counter);
+  if (!PyList_Check(pRes2)){
+    log_info(LD_DIR, "Failed to fetch the set S used for broadcast encryption.");
+    return 0;
+  }
+
+  int SizeOfList = PyList_Size(pRes2);
+  log_info(LD_DIR, "The length of healthy relay set (S) is %d.", SizeOfList);
+  int relaySet[SizeOfList];
+  for (int i=0; i<SizeOfList; i++) {
+    PyObject *listItem = PyList_GetItem(pRes2, i);
+    int relayIndex = 0;
+    PyArg_Parse(listItem, "i", &relayIndex);
+    relaySet[i] = relayIndex;
+    Py_XDECREF(listItem);
+  }
+  Py_XDECREF(pRes2);
+
+  char *Key = NULL;
+  char *Hdr = NULL;
+  bkem_encryption(&Key, &Hdr, relaySet, SizeOfList);
+  log_info(LD_DIR, "The symmetric key output from the BGW scheme is %s.", Key);
+
+  pFunc = PyDict_GetItemString(pDict, "relayUploadSRIAndNSD");
+  pArgs = PyTuple_New(4);
+  PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", Counter));
+  PyTuple_SetItem(pArgs, 1, Py_BuildValue("s", Hdr));
+  PyTuple_SetItem(pArgs, 2, Py_BuildValue("s", str));
+  PyTuple_SetItem(pArgs, 3, Py_BuildValue("s", Key));
+  pResVal = PyObject_CallObject(pFunc, pArgs); 
+  log_info(LD_DIR, "%s successfully uploads SRI and NSD to blockchain.", ri->nickname);
+
+  Py_XDECREF(pModule);  
+  Py_XDECREF(pArgs);
+  Py_XDECREF(pResVal);
+  //Py_Finalize();
+  return 1;
+}
+
+// ************
+// BADNET
+// ************
+void 
+bkem_decryption(char **KeyStr, int *S, int num, int index, char **Hdr)
+{
+  bkem_global_params_t gps;
+  bkem_system_t sys;
+  bkem_param(&gps, &sys);
+
+  #define fileName "lib/BESK"
+  char* filePath = relayPath fileName;
+  FILE *fpSK = fopen(filePath, "r");  
+  char strLine[512];
+  fgets(strLine, 512, fpSK);
+  sys->d_i = pbc_malloc(sizeof(struct element_s));
+  element_init_G1(sys->d_i[0], gps->pairing);
+  element_set_str(sys->d_i[0], strLine, 10);
+
+  keypair_t keypair;
+  keypair = pbc_malloc(sizeof(struct keypair_s));
+  keypair->HDR = pbc_malloc((gps->A+1) * sizeof(element_t));
+
+  int HdrDataSize = strlen(Hdr[0]) / 2;
+  for (int i=0; i<(gps->A+1); i++) {
+    element_init_G1(keypair->HDR[i], gps->pairing);
+    unsigned char * HdrData = pbc_malloc(HdrDataSize);
+    int j = 0, offset = 0;
+    while ((sscanf(Hdr[i]+offset, "%2X", &HdrData[j])) == 1) {
+      offset += 2;
+      j++;
     }
-    is_publickeys = 1;
-    log_info(LD_DIR, "%s successfully downloads clients public keys.", ri->nickname);
+    element_from_bytes_compressed(keypair->HDR[i], HdrData);
   }
 
-  pFunc = PyDict_GetItemString(pDict, "relay_upload_SRI_and_keys");
-  pArgs = PyTuple_New(2);
-  PyTuple_SetItem(pArgs, 0, Py_BuildValue("s", str));
-  if (is_publickeys) {
-    PyTuple_SetItem(pArgs, 1, Py_BuildValue("N", publicKey));
-  } else {
-    PyTuple_SetItem(pArgs, 1, Py_BuildValue("s", ""));
+  element_t K;
+  get_decryption_key(K, gps, S, num, index, sys->d_i[0], keypair->HDR, sys->PK);
+
+  int n = element_length_in_bytes(K);
+  unsigned char *data = pbc_malloc(n);
+  element_to_bytes(data, K);
+  *KeyStr = (char *)malloc(512);
+  int temp = sprintf(*KeyStr, "%02X", data[0]);
+  for (int i=1; i<n; i++) {
+    temp += sprintf(*KeyStr + temp, "%02X", data[i]);
   }
+
+  element_clear(K);
+  free(keypair);
+}
+
+// ************
+// BADNET
+// ************
+int 
+router_download_descriptor_from_blockchain(void)
+{
+  if (python_is_initialized == false) {
+    Py_Initialize();
+    if (!Py_IsInitialized()) {
+      log_info(LD_DIR, "Fatal Python error: Py_Initialize failed.");
+      return 0;
+    }
+    python_is_initialized = true;
+  }
+
+  PyObject *pModule = NULL;
+  PyObject *pDict = NULL;
+  PyObject *pFunc = NULL;
+  PyObject *pArgs = NULL;
+  PyObject *pResVal = NULL;
+
+  PyRun_SimpleString("import sys");
+  PyRun_SimpleString(sysPath); 
+
+  pModule = PyImport_ImportModule("Relay");
+  if (!pModule) {
+    log_info(LD_DIR, "Fatal Python error: Load python file failed.");
+    return 0;
+  }
+  pDict = PyModule_GetDict(pModule);
+  if (!pDict) {
+    log_info(LD_DIR, "Fatal Python error: Can't find dict in python file.");
+    return 0;
+  }
+
+  // ====== BGW Broadcast Encryption Scheme ======
+  int Counter = 0;
+  PyObject *pRes2 = NULL;
+  pFunc = PyDict_GetItemString(pDict, "relayGetSet");
   pResVal = PyObject_CallObject(pFunc, pArgs);
-  log_info(LD_DIR, "%s successfully uploads SRI and keys to blockchain.", ri->nickname);
+  PyArg_ParseTuple(pResVal, "i|O", &Counter, &pRes2);
 
+  log_info(LD_DIR, "The number of CurrentCounter is %d.", Counter);
+  if (!PyList_Check(pRes2)){
+      printf("Failed to fetch the set S used for broadcast encryption.");
+  }
+
+  int SizeOfList = PyList_Size(pRes2);
+  printf("SizeOfList: %d\n", SizeOfList);
+  int relaySet[SizeOfList];
+  for(int i=0; i<SizeOfList; i++) {
+    PyObject *listItem = PyList_GetItem(pRes2, i);
+    int relayIndex = 0;
+    PyArg_Parse(listItem, "i", &relayIndex);
+    relaySet[i] = relayIndex;
+    Py_DECREF(listItem);
+  }
+
+  int fileEnd = 0;
+  for(int i=0; i<SizeOfList; i++) {
+    if (i == SizeOfList-1) {
+        fileEnd = 1;
+    }
+    int relayID = relaySet[i];
+    pFunc = PyDict_GetItemString(pDict, "relayDownloadSRI");
+    pArgs = PyTuple_New(1);
+    PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", relayID));
+    pResVal = PyObject_CallObject(pFunc, pArgs);
+
+    PyObject *pHdr = NULL;
+    PyObject *pRelaySet = NULL;
+    char *enSRI = NULL;
+    PyArg_ParseTuple(pResVal, "O|O|s", &pRelaySet, &pHdr, &enSRI);
+        
+    int num = PyList_Size(pRelaySet);
+    int S[num];
+    for(int i=0; i<num; i++) {
+      PyObject *listItem = PyList_GetItem(pRelaySet, i);
+      int arrItem = 0;
+      PyArg_Parse(listItem, "i", &arrItem);
+      S[i] = arrItem;
+      Py_DECREF(listItem);
+    }
+
+    int HdrNum = PyList_Size(pHdr);
+    char *Hdr[HdrNum];
+    for(int i=0; i<HdrNum; i++) {
+      PyObject *listItem = PyObject_Str(PyList_GetItem(pHdr, i));
+      char* resultStr = "";
+      PyArg_Parse(listItem, "s", &resultStr);
+      Hdr[i] = (char*)malloc(200*sizeof(char));
+      strcpy(Hdr[i], resultStr);
+      Py_DECREF(listItem);
+    }
+
+    char *decKey = NULL;
+    bkem_decryption(&decKey, S, num, myIndex, Hdr);
+
+    pFunc = PyDict_GetItemString(pDict, "relayDecryptSRIs");
+    pArgs = PyTuple_New(4);
+    PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", relayID));
+    PyTuple_SetItem(pArgs, 1, Py_BuildValue("s", enSRI));
+    PyTuple_SetItem(pArgs, 2, Py_BuildValue("s", decKey));
+    PyTuple_SetItem(pArgs, 3, Py_BuildValue("i", fileEnd));
+    pResVal = PyObject_CallObject(pFunc, pArgs);
+  }
+
+  log_info(LD_DIR, "%s successfully downloads NIME from blockchain.", ri->nickname);
   Py_XDECREF(pModule);  
   Py_XDECREF(pArgs);
   Py_XDECREF(pResVal);
@@ -2646,7 +3012,7 @@ router_rebuild_descriptor(int force, int flag)
   }
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   if (flag == 1) {
     if (relay_is_registered == false) {
@@ -2655,8 +3021,13 @@ router_rebuild_descriptor(int force, int flag)
         return false;
       }
     }
+    
+    if (router_download_descriptor_from_blockchain() == 0) {
+      log_info(LD_DIR, "Relay download descriptors failure.");
+    }
+
     if (router_upload_descriptor_to_blockchain(ri) == 0) {
-      log_info(LD_DIR, "Relay upload failure.");
+      log_info(LD_DIR, "Relay upload its descriptor failure.");
       return false;
     }
   }
@@ -2671,7 +3042,7 @@ router_rebuild_descriptor(int force, int flag)
   desc_gen_reason = desc_dirty_reason;
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   /*
   if (BUG(desc_gen_reason == NULL)) {
