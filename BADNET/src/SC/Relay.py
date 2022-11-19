@@ -128,7 +128,15 @@ def relayUploadSRIAndNSD(_Counter, Hdr, SRI, Key):
 # ============ SRI Download & Decryption  ============
 
 def relayGetCounterList(index):
-    return contract_instance.functions.relay_get_counter_list(index).call({'from': account.wallet_addr})
+    operation, alterSet = contract_instance.functions.relay_get_counter_list(index).call({'from': account.wallet_addr})
+    addSet = []
+    deleteSet = []
+    for i in range(0, len(operation)):
+        if operation[i]:
+            deleteSet += alterSet[i]
+        else:
+            addSet += alterSet[i]
+    return addSet, deleteSet
 
 
 def relayDownloadSRIHelper(index):
@@ -138,11 +146,13 @@ def relayDownloadSRIHelper(index):
 
 def relayDownloadSRI(relayID):
     relayCounter, Hdr, relayEnSRI = relayDownloadSRIHelper(relayID)
-    S = relaySet
+    S = relaySet.copy()
     if relayCounter < Counter:
-        addSet = relayGetCounterList(relayCounter)
-        for j in range(0, len(addSet)):
-            S += addSet[j]
+        addSet, deleteSet = relayGetCounterList(relayCounter)
+        for i in range(0, len(addSet)):
+            S += addSet[i]
+        for j in range(0, len(deleteSet)):
+            S.remove(deleteSet[j])
     relayHdr = re.findall(r'.{130}', Hdr)
     return S, relayHdr, relayEnSRI
 
