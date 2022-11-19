@@ -19,8 +19,8 @@ Our project is currently maintaining a small-scale anonymity network, including 
 
 The prototype system is still being tested and continuously updated. Details of the current system are as follows:
 - Source Code: BADNET
-- Contract Address: [0x40d600562bBe16d92aA951a8014393Dab9284AF1](https://goerli.etherscan.io/address/0x40d600562bBe16d92aA951a8014393Dab9284AF1)
-- Deployment Date: November 18th, 2022
+- Contract Address: [0x2C6DBBdB60C75d4E72ACfba11d2e5FCaf25F25c1](https://goerli.etherscan.io/address/0x2c6dbbdb60c75d4e72acfba11d2e5fcaf25f25c1)
+- Deployment Date: November 19th, 2022
 - Number of Relays: 12
 - Descriptor's Upload Period: 1 hour
 
