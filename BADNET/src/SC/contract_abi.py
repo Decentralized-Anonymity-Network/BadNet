@@ -222,6 +222,11 @@ abi = [
 		"name": "relay_get_counter_list",
 		"outputs": [
 			{
+				"internalType": "bool[]",
+				"name": "",
+				"type": "bool[]"
+			},
+			{
 				"internalType": "uint16[][]",
 				"name": "",
 				"type": "uint16[][]"
