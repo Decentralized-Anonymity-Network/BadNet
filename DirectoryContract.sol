@@ -9,6 +9,7 @@ contract DirectoryContractV3{
     uint16 relayIndex = 1;
     uint16[] public unhealthyRelaySet;
     uint8 CurrentCounter = 1;
+    mapping (uint8 => bool) CounterOP;
     mapping (uint8 => uint16[]) CounterList;
     
     struct Relay{
@@ -45,11 +46,13 @@ contract DirectoryContractV3{
     // Relay registration.
     function relay_register() public {
         require(relay[relayaddr[msg.sender]].registered == false);
-        uint16 num = relayIndex;
-        relayaddr[msg.sender] = num;
-        relay[num].registered = true;
-        relay[num].healthflag = true;
+        relayaddr[msg.sender] = relayIndex;
+        relay[relayIndex].registered = true;
+        relay[relayIndex].healthflag = true;
+        CounterOP[CurrentCounter] = true;
+        CounterList[CurrentCounter] = [relayIndex];
         relayIndex++;
+        CurrentCounter++;
     }
     
     // Relay gets SRI upload period (in minutes). 
@@ -94,14 +97,16 @@ contract DirectoryContractV3{
     }
 
     // Relay gets the historical list of counter.
-    function relay_get_counter_list(uint8 counter) view public returns(uint16[][] memory) {
+    function relay_get_counter_list(uint8 counter) view public returns(bool[] memory, uint16[][] memory) {
         require(relay[relayaddr[msg.sender]].registered == true);
         require(counter < CurrentCounter);
-        uint16[][] memory addSet = new uint16[][](CurrentCounter-counter);
+        bool[] memory operation = new bool[](CurrentCounter-counter);
+        uint16[][] memory alterSet = new uint16[][](CurrentCounter-counter);
         for(uint8 i=counter; i<CurrentCounter; i++) {
-            addSet[CurrentCounter-i-1] = CounterList[i];
+            operation[CurrentCounter-i-1] = CounterOP[i];
+            alterSet[CurrentCounter-i-1] = CounterList[i];
         }
-        return addSet;
+        return (operation, alterSet);
     }
  
     // Relay cancellation.
@@ -112,9 +117,9 @@ contract DirectoryContractV3{
     }    
     
     
-    // ************
+    // ************************
     // Client Method
-    // ************
+    // ************************
     
     // Client downloads NSD.
     function client_download_NSD() view public returns(bool[] memory, bytes memory) {
@@ -169,6 +174,7 @@ contract DirectoryContractV3{
             relay[list[i]].healthflag = false;
             unhealthyRelaySet.push(list[i]);
         }
+        CounterOP[CurrentCounter] = false;
         CounterList[CurrentCounter] = list;
         CurrentCounter++;
     }
