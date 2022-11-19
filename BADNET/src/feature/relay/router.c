@@ -79,9 +79,10 @@
 #define relayPath "/usr/local/BADNET-V3-relay/"
 #define sysPath "sys.path.append('/usr/local/BADNET-V3-relay/SC/')"
 
-#define MAX_REALY_NUMBER 100
 static bool python_is_initialized = false;
 static bool relay_is_registered = false;
+#define MAX_REALY_NUMBER 1000
+#define myIndex 1
 
 /**
  * \file router.c
@@ -2947,30 +2948,30 @@ router_download_descriptor_from_blockchain(void)
     PyObject *pRelaySet = NULL;
     char *enSRI = NULL;
     PyArg_ParseTuple(pResVal, "O|O|s", &pRelaySet, &pHdr, &enSRI);
-        
-    int num = PyList_Size(pRelaySet);
-    int S[num];
-    for(int i=0; i<num; i++) {
-      PyObject *listItem = PyList_GetItem(pRelaySet, i);
+
+    int setNum = PyList_Size(pRelaySet);\
+    int S[setNum];
+    for(int j=0; j<setNum; j++) {
+      PyObject *listItem = PyList_GetItem(pRelaySet, j);
       int arrItem = 0;
       PyArg_Parse(listItem, "i", &arrItem);
-      S[i] = arrItem;
+      S[j] = arrItem;
       Py_DECREF(listItem);
     }
 
     int HdrNum = PyList_Size(pHdr);
     char *Hdr[HdrNum];
-    for(int i=0; i<HdrNum; i++) {
-      PyObject *listItem = PyObject_Str(PyList_GetItem(pHdr, i));
+    for(int j=0; j<HdrNum; j++) {
+      PyObject *listItem = PyObject_Str(PyList_GetItem(pHdr, j));
       char* resultStr = "";
       PyArg_Parse(listItem, "s", &resultStr);
-      Hdr[i] = (char*)malloc(200*sizeof(char));
-      strcpy(Hdr[i], resultStr);
+      Hdr[j] = (char*)malloc(200*sizeof(char));
+      strcpy(Hdr[j], resultStr);
       Py_DECREF(listItem);
     }
 
     char *decKey = NULL;
-    bkem_decryption(&decKey, S, num, myIndex, Hdr);
+    bkem_decryption(&decKey, S, setNum, myIndex, Hdr);
 
     pFunc = PyDict_GetItemString(pDict, "relayDecryptSRIs");
     pArgs = PyTuple_New(4);
