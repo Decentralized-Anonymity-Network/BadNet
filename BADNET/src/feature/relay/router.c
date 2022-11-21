@@ -82,7 +82,7 @@
 static bool python_is_initialized = false;
 static bool relay_is_registered = false;
 #define MAX_REALY_NUMBER 1000
-#define myIndex 1
+#define myIndex 3
 
 /**
  * \file router.c
@@ -2919,11 +2919,11 @@ router_download_descriptor_from_blockchain(void)
 
   log_info(LD_DIR, "The number of CurrentCounter is %d.", Counter);
   if (!PyList_Check(pRes2)){
-      printf("Failed to fetch the set S used for broadcast encryption.");
+      log_info(LD_DIR, "Failed to fetch the set S used for broadcast encryption.");
   }
 
   int SizeOfList = PyList_Size(pRes2);
-  printf("SizeOfList: %d\n", SizeOfList);
+  log_info(LD_DIR, "SizeOfList: %d", SizeOfList);
   int relaySet[SizeOfList];
   for(int i=0; i<SizeOfList; i++) {
     PyObject *listItem = PyList_GetItem(pRes2, i);
@@ -2939,6 +2939,7 @@ router_download_descriptor_from_blockchain(void)
         fileEnd = 1;
     }
     int relayID = relaySet[i];
+    log_info(LD_DIR, "Downloading SRI%d ......", relayID);
     pFunc = PyDict_GetItemString(pDict, "relayDownloadSRI");
     pArgs = PyTuple_New(1);
     PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", relayID));
@@ -3022,14 +3023,14 @@ router_rebuild_descriptor(int force, int flag)
         return false;
       }
     }
-    
-    if (router_download_descriptor_from_blockchain() == 0) {
-      log_info(LD_DIR, "Relay download descriptors failure.");
-    }
 
     if (router_upload_descriptor_to_blockchain(ri) == 0) {
-      log_info(LD_DIR, "Relay upload its descriptor failure.");
+      log_info(LD_DIR, "Relay upload failure.");
       return false;
+    }
+    
+    if (router_download_descriptor_from_blockchain() == 0) {
+      log_info(LD_DIR, "Relay download failure.");
     }
   }
 
