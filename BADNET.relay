@@ -1,14 +1,14 @@
 TestingTorNetwork 1
 AssumeReachable 1
-DataDirectory /usr/local/BADNet-relay/lib
+DataDirectory /usr/local/BADNET-V3-relay/lib
 RunAsDaemon 1
 ConnLimit 60
 Nickname XXX
 ShutdownWaitLength 0
 PidFile /usr/local/BADNet-relay/lib/pid
-Log notice file /usr/local/BADNet-relay/log/notice.log
-Log info file /usr/local/BADNet-relay/log/info.log
-Log debug file /usr/local/BADNet-relay/log/debug.log
+Log notice file /usr/local/BADNET-V3-relay/log/notice.log
+Log info file /usr/local/BADNET-V3-relay/log/info.log
+Log debug file /usr/local/BADNET-V3-relay/log/debug.log
 ProtocolWarnings 1
 SafeLogging 0
 DisableDebuggerAttachment 0
