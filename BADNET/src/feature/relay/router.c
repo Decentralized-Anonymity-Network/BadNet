@@ -2982,7 +2982,7 @@ router_download_descriptor_from_blockchain(void)
     pResVal = PyObject_CallObject(pFunc, pArgs);
   }
 
-  log_info(LD_DIR, "%s successfully downloads NIME from blockchain.", ri->nickname);
+  log_info(LD_DIR, "Successfully downloads NIME from blockchain.");
   Py_XDECREF(pModule);  
   Py_XDECREF(pArgs);
   Py_XDECREF(pResVal);
