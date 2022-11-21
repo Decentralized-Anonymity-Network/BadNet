@@ -3031,6 +3031,7 @@ router_rebuild_descriptor(int force, int flag)
     
     if (router_download_descriptor_from_blockchain() == 0) {
       log_info(LD_DIR, "Relay download failure.");
+      return false;
     }
   }
 
