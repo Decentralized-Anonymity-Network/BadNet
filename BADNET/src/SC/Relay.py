@@ -167,11 +167,16 @@ def AES_decrypt(cipher_text, key):
 
 def relayDecryptSRIs(relayID, enSRI, decKey, fileEnd):
     AES_Key = bytes(decKey[0:32].encode())
-    _SRI = AES_decrypt(enSRI, AES_Key)
-    with open(path + 'lib/NIME-cached', mode='a') as filename:
-        filename.write(str(relayID) + '\n')
-        filename.write(_SRI + '\n')
+    try:
+        _SRI = AES_decrypt(enSRI, AES_Key)
+    except UnicodeDecodeError:
+        return
+    else:
+        with open(path + 'lib/NIME-cached', mode='a') as filename:
+            filename.write("index " + str(relayID) + '\n')
+            filename.write(_SRI)
     if fileEnd == 1:
         if os.path.exists(path + 'lib/NIME'):
             os.remove(path + 'lib/NIME')
-        os.rename(path + 'lib/NIME-cached', path + 'lib/NIME')
+        if os.path.exists(path + 'lib/NIME-cached'):
+            os.rename(path + 'lib/NIME-cached', path + 'lib/NIME')
