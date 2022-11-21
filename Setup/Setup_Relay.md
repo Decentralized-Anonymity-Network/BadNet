@@ -33,7 +33,7 @@ git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 cd BadNet
 vi BADNET.relay (fill in "Nickname", "OrPort" and "Address")
 cd BADNET
-sudo sh badnet_relay.sh (output is a Ropsten Ethereum address)
+sudo sh badnet_relay.sh (output is an Ethereum address)
 sudo ./configure
 sudo make
 ```
