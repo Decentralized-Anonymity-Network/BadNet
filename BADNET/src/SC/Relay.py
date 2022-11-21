@@ -168,10 +168,10 @@ def AES_decrypt(cipher_text, key):
 def relayDecryptSRIs(relayID, enSRI, decKey, fileEnd):
     AES_Key = bytes(decKey[0:32].encode())
     _SRI = AES_decrypt(enSRI, AES_Key)
-    with open('NIME-cached', mode='a') as filename:
+    with open(path + 'lib/NIME-cached', mode='a') as filename:
         filename.write(str(relayID) + '\n')
         filename.write(_SRI + '\n')
     if fileEnd == 1:
-        if os.path.exists('NIME'):
-            os.remove('NIME')
-        os.rename("NIME-cached", "NIME")
+        if os.path.exists(path + 'lib/NIME'):
+            os.remove(path + 'lib/NIME')
+        os.rename(path + 'lib/NIME-cached', path + 'lib/NIME')
