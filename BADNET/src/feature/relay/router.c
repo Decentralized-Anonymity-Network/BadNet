@@ -2633,7 +2633,7 @@ relay_register(void)
 void 
 bkem_param(bkem_global_params_t *bgps, bkem_system_t *bsys)
 {
-  #define fileName1 "lib/a.param"
+  #define fileName1 "lib/BEsystem/a.param"
   char* filePath1 = relayPath fileName1;
   FILE *fParam = fopen(filePath1, "r");
   char buf[4096];
@@ -2650,7 +2650,7 @@ bkem_param(bkem_global_params_t *bgps, bkem_system_t *bsys)
   sys->PK->g_i = pbc_malloc(2 * gps->B * sizeof(element_t));
   sys->PK->v_i = pbc_malloc(gps->A * sizeof(struct element_s));
 
-  #define fileName2 "lib/BEPK"
+  #define fileName2 "lib/BEsystem/BEPK"
   char* filePath2 = relayPath fileName2;
   FILE *fpPK = fopen(filePath2, "r");
   char strLine[512];
@@ -2834,7 +2834,7 @@ bkem_decryption(char **KeyStr, int *S, int num, int index, char **Hdr)
   bkem_system_t sys;
   bkem_param(&gps, &sys);
 
-  #define fileName "lib/BESK"
+  #define fileName "lib/BEsystem/BESK"
   char* filePath = relayPath fileName;
   FILE *fpSK = fopen(filePath, "r");  
   char strLine[512];
