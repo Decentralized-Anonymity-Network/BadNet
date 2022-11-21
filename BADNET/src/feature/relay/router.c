@@ -2939,7 +2939,6 @@ router_download_descriptor_from_blockchain(void)
         fileEnd = 1;
     }
     int relayID = relaySet[i];
-    log_info(LD_DIR, "Downloading SRI%d ......", relayID);
     pFunc = PyDict_GetItemString(pDict, "relayDownloadSRI");
     pArgs = PyTuple_New(1);
     PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", relayID));
