@@ -106,7 +106,7 @@ rotate_onion_key_callback(time_t now, const or_options_t *options)
     cpuworkers_rotate_keyinfo();
 
     // ************
-    // BADNet
+    // BADNET
     // ************
     /*    
     if (!router_rebuild_descriptor(1)) {
@@ -134,7 +134,7 @@ check_descriptor_callback(time_t now, const or_options_t *options)
 /** How often do we check whether part of our router info has changed in a
  * way that would require an upload? That includes checking whether our IP
  * address has changed. */
-#define CHECK_DESCRIPTOR_INTERVAL (60*60)
+#define CHECK_DESCRIPTOR_INTERVAL (60*10)
 
   (void)options;
 
@@ -142,7 +142,7 @@ check_descriptor_callback(time_t now, const or_options_t *options)
    * one is inaccurate. */
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   /*
   if (!net_is_disabled()) {
