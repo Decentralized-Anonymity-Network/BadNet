@@ -32,7 +32,7 @@ git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 ```bat
 cd BadNet
 vi BADNET.relay (fill in "Nickname", "OrPort" and "Address")
-cd BADNet
+cd BADNET
 sudo sh badnet_relay.sh (output is a Ropsten Ethereum address)
 sudo ./configure
 sudo make
@@ -41,9 +41,9 @@ sudo make
 Get ETH (Ethereum Goerli Testnet) with generated address from 
 [Faucet1](https://ethdrop.dev/), [Faucet2](https://www.allthatnode.com/faucet/ethereum.dsrv), or [Faucet3](https://goerli-faucet.pk910.de/).
 
-#### Running BADNet relay:
+#### Running BADNET relay:
 ```bat
 cd src/app
-sudo ./tor --list-fingerprint --orport 1 --dirserver "x 127.0.0.1:1 ffffffffffffffffffffffffffffffffffffffff" --datadirectory /usr/local/BADNet-relay/lib/
-sudo ./tor -f /usr/local/BADNet-relay/BADNet.relay
+sudo ./tor --list-fingerprint --orport 1 --dirserver "x 127.0.0.1:1 ffffffffffffffffffffffffffffffffffffffff" --datadirectory /usr/local/BADNET-V3-relay/lib/
+sudo ./tor -f /usr/local/BADNET-V3-relay/BADNET.relay
 ```
