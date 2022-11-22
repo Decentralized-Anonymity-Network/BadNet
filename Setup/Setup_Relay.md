@@ -18,8 +18,15 @@ pip3 install web3 eciespy
 ```
 #### Ubuntu
 ```bat
-sudo apt-get install gcc libevent-dev libssl-dev automake python3.6 python3.6-dev -y
+sudo apt-get install gcc libevent-dev libssl-dev automake python3.6 python3.6-dev libgmp-dev flex bison -y
+wget https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz
+tar -zxvf pbc-0.5.14.tar.gz
+cd pbc-0.5.14 && ./configure && make && sudo make install
+
 sudo ln -s /usr/lib/python3.6/config-3.6m-x86_64-linux-gnu/libpython3.6.so /usr/lib/libpython3.6.so
+sudo ln -s /usr/lib/x86_64-linux-gnu/libgmp.so.10 /usr/lib/libgmp.so.10
+sudo ln -s /usr/local/lib/libpbc.so.1 /usr/lib/libpbc.so.1
+
 pip3 install --upgrade pip
 pip3 install web3 eciespy
 ```
