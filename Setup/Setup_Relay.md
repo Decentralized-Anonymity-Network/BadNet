@@ -5,9 +5,9 @@ The prototype system installation requires CentOS/Ubuntu system and Python 3.6.
 #### CentOS
 ```bat
 sudo yum install gcc libevent-devel openssl-devel automake python36 python36-devel gmp-devel flex bison -y
-sudo wget https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz
+wget https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz
 tar -zxvf pbc-0.5.14.tar.gz
-cd pbc-0.5.14 && ./configure && make && make install
+cd pbc-0.5.14 && ./configure && make && sudo make install
 
 sudo ln -s /usr/lib64/libpython3.6m.so.1.0 /usr/lib/libpython3.6.so
 sudo ln -s /usr/lib64/libgmp.so.10 /usr/lib/libgmp.so.10
