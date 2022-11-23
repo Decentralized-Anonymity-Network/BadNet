@@ -35,11 +35,11 @@ contract DirectoryContractV3{
     // ************************
     
     // Relay registration check.
-    function relay_registration_check() public view returns(bool) {
+    function relay_registration_check() public view returns(uint16) {
         if(relay[relayaddr[msg.sender]].registered == true) {
-            return true;
+            return relayaddr[msg.sender];
         } else {
-            return false;
+            return 0;
         }
     }
     
