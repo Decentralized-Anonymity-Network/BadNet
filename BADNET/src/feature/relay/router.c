@@ -81,8 +81,8 @@
 
 static bool python_is_initialized = false;
 static bool relay_is_registered = false;
+static long myIndex = 0;
 #define MAX_REALY_NUMBER 1000
-#define myIndex 3
 
 /**
  * \file router.c
@@ -2606,19 +2606,22 @@ relay_register(void)
 
   pFunc = PyDict_GetItemString(pDict, "relayRegistrationCheck");
   pResVal = PyObject_CallObject(pFunc, pArgs);
-  long flag = PyLong_AsLong(pResVal);
+  long index = PyLong_AsLong(pResVal);
 
-  if (flag == 1) {
-    log_info(LD_DIR, "Relay is already registered in the network."); 
-    relay_is_registered = true;
-  } 
-  else {
-    log_info(LD_DIR, "Relay is not yet registered in the network"); 
+  if (index == 0) {
+    log_info(LD_DIR, "Relay is registering ......");
     pFunc = PyDict_GetItemString(pDict, "relayRegister");
     pResVal = PyObject_CallObject(pFunc, pArgs);
-    relay_is_registered = true;
-    log_info(LD_DIR, "Relay is already registered in the network.");    
+
+    pFunc = PyDict_GetItemString(pDict, "relayRegistrationCheck");
+    pResVal = PyObject_CallObject(pFunc, pArgs);
+    myIndex = PyLong_AsLong(pResVal);
   }
+  else {
+    myIndex = index;
+  }
+  relay_is_registered = true;
+  log_info(LD_DIR, "Relay is already registered in the network, and myIndex is %d.", myIndex);
 
   Py_XDECREF(pModule);  
   Py_XDECREF(pArgs);
@@ -2971,7 +2974,7 @@ router_download_descriptor_from_blockchain(void)
     }
 
     char *decKey = NULL;
-    bkem_decryption(&decKey, S, setNum, myIndex, Hdr);
+    bkem_decryption(&decKey, S, setNum, (int) myIndex, Hdr);
 
     pFunc = PyDict_GetItemString(pDict, "relayDecryptSRIs");
     pArgs = PyTuple_New(4);
