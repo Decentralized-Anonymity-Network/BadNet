@@ -1,91 +1,5 @@
 abi = [
 	{
-		"inputs": [
-			{
-				"internalType": "address payable",
-				"name": "addr",
-				"type": "address"
-			}
-		],
-		"name": "contract_transfer_to_relay",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint16",
-				"name": "size",
-				"type": "uint16"
-			},
-			{
-				"internalType": "uint16[]",
-				"name": "list",
-				"type": "uint16[]"
-			}
-		],
-		"name": "modifyHealthFlag",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "relay_cancellation",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "relay_register",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_counter",
-				"type": "uint8"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_Hdr",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_encryptedSRI",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_NSD",
-				"type": "bytes"
-			}
-		],
-		"name": "relay_upload_SRI_and_NSD",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "period",
-				"type": "uint256"
-			}
-		],
-		"name": "setSRIperiod",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
@@ -93,10 +7,6 @@ abi = [
 	{
 		"stateMutability": "payable",
 		"type": "fallback"
-	},
-	{
-		"stateMutability": "payable",
-		"type": "receive"
 	},
 	{
 		"inputs": [],
@@ -114,6 +24,19 @@ abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "addr",
+				"type": "address"
+			}
+		],
+		"name": "contract_transfer_to_relay",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -180,6 +103,31 @@ abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint16",
+				"name": "size",
+				"type": "uint16"
+			},
+			{
+				"internalType": "uint16[]",
+				"name": "list",
+				"type": "uint16[]"
+			}
+		],
+		"name": "modifyHealthFlag",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "relay_cancellation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -281,15 +229,63 @@ abi = [
 	},
 	{
 		"inputs": [],
+		"name": "relay_register",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "relay_registration_check",
 		"outputs": [
 			{
-				"internalType": "bool",
+				"internalType": "uint16",
 				"name": "",
-				"type": "bool"
+				"type": "uint16"
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "_counter",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_Hdr",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_encryptedSRI",
+				"type": "bytes"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_NSD",
+				"type": "bytes"
+			}
+		],
+		"name": "relay_upload_SRI_and_NSD",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "period",
+				"type": "uint256"
+			}
+		],
+		"name": "setSRIperiod",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -310,5 +306,9 @@ abi = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
 	}
 ]
