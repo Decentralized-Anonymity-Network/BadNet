@@ -12,7 +12,7 @@ from Crypto.Cipher import AES
 import secrets
 from ecies import encrypt
 
-web3 = Web3(HTTPProvider("https://goerli.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
+web3 = Web3(HTTPProvider("https://sepolia.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
 contract_instance = web3.eth.contract(address=account.contract_address, abi=contract_abi.abi)
 AES_CBC_IV = b'qqqqqqqqqqqqqqqq'
 path = '/usr/local/BADNET-V3-relay/'
@@ -24,15 +24,14 @@ relaySet = []
 # ============ Registration ============
 
 def relayRegistrationCheck():
-    flag = contract_instance.functions.relay_registration_check().call({'from': account.wallet_addr})
-    return 1 if flag else 0
+    return contract_instance.functions.relay_registration_check().call({'from': account.wallet_addr})
 
 
 def relayRegister():
     start = time.time()
     txn = contract_instance.functions.relay_register().buildTransaction(
         {
-            'chainId': 5,
+            'chainId': 11155111,
             'nonce': web3.eth.getTransactionCount(account.wallet_addr),
             'gas': 3000000,
             'value': Web3.toWei(0, 'ether'),
@@ -102,7 +101,7 @@ def relayUploadSRIAndNSD(_Counter, Hdr, SRI, Key):
     start = time.time()
     txn = contract_instance.functions.relay_upload_SRI_and_NSD(_Counter, _HDR, _enSRI, _NSD).buildTransaction(
         {
-            'chainId': 5,
+            'chainId': 11155111,
             'nonce': web3.eth.getTransactionCount(account.wallet_addr),
             'gas': 3000000,
             'value': Web3.toWei(0, 'ether'),
