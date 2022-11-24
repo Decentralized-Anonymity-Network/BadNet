@@ -3026,15 +3026,15 @@ router_rebuild_descriptor(int force, int flag)
       }
     }
 
-    if (router_upload_descriptor_to_blockchain(ri) == 0) {
-      log_info(LD_DIR, "Relay upload failure.");
-      return false;
-    }
-    
     if (router_download_descriptor_from_blockchain() == 0) {
       log_info(LD_DIR, "Relay download failure.");
       return false;
     }
+
+    if (router_upload_descriptor_to_blockchain(ri) == 0) {
+      log_info(LD_DIR, "Relay upload failure.");
+      return false;
+    }    
   }
 
   routerinfo_free(desc_routerinfo);
