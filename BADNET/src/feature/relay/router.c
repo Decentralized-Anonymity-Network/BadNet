@@ -2952,37 +2952,39 @@ router_download_descriptor_from_blockchain(void)
     char *enSRI = NULL;
     PyArg_ParseTuple(pResVal, "O|O|s", &pRelaySet, &pHdr, &enSRI);
 
-    int setNum = PyList_Size(pRelaySet);\
-    int S[setNum];
-    for(int j=0; j<setNum; j++) {
-      PyObject *listItem = PyList_GetItem(pRelaySet, j);
-      int arrItem = 0;
-      PyArg_Parse(listItem, "i", &arrItem);
-      S[j] = arrItem;
-      Py_DECREF(listItem);
+    if(strlen(enSRI) != 0) {
+      int setNum = PyList_Size(pRelaySet);
+      int S[setNum];
+      for(int j=0; j<setNum; j++) {
+        PyObject *listItem = PyList_GetItem(pRelaySet, j);
+        int arrItem = 0;
+        PyArg_Parse(listItem, "i", &arrItem);
+        S[j] = arrItem;
+        Py_DECREF(listItem);
+      }
+
+      int HdrNum = PyList_Size(pHdr);
+      char *Hdr[HdrNum];
+      for(int j=0; j<HdrNum; j++) {
+        PyObject *listItem = PyObject_Str(PyList_GetItem(pHdr, j));
+        char* resultStr = "";
+        PyArg_Parse(listItem, "s", &resultStr);
+        Hdr[j] = (char*)malloc(200*sizeof(char));
+        strcpy(Hdr[j], resultStr);
+        Py_DECREF(listItem);
+      }
+
+      char *decKey = NULL;
+      bkem_decryption(&decKey, S, setNum, (int) myIndex, Hdr);
+
+      pFunc = PyDict_GetItemString(pDict, "relayDecryptSRIs");
+      pArgs = PyTuple_New(4);
+      PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", relayID));
+      PyTuple_SetItem(pArgs, 1, Py_BuildValue("s", enSRI));
+      PyTuple_SetItem(pArgs, 2, Py_BuildValue("s", decKey));
+      PyTuple_SetItem(pArgs, 3, Py_BuildValue("i", fileEnd));
+      pResVal = PyObject_CallObject(pFunc, pArgs);
     }
-
-    int HdrNum = PyList_Size(pHdr);
-    char *Hdr[HdrNum];
-    for(int j=0; j<HdrNum; j++) {
-      PyObject *listItem = PyObject_Str(PyList_GetItem(pHdr, j));
-      char* resultStr = "";
-      PyArg_Parse(listItem, "s", &resultStr);
-      Hdr[j] = (char*)malloc(200*sizeof(char));
-      strcpy(Hdr[j], resultStr);
-      Py_DECREF(listItem);
-    }
-
-    char *decKey = NULL;
-    bkem_decryption(&decKey, S, setNum, (int) myIndex, Hdr);
-
-    pFunc = PyDict_GetItemString(pDict, "relayDecryptSRIs");
-    pArgs = PyTuple_New(4);
-    PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", relayID));
-    PyTuple_SetItem(pArgs, 1, Py_BuildValue("s", enSRI));
-    PyTuple_SetItem(pArgs, 2, Py_BuildValue("s", decKey));
-    PyTuple_SetItem(pArgs, 3, Py_BuildValue("i", fileEnd));
-    pResVal = PyObject_CallObject(pFunc, pArgs);
   }
 
   log_info(LD_DIR, "Successfully downloads NIME from blockchain.");
@@ -3034,7 +3036,9 @@ router_rebuild_descriptor(int force, int flag)
     if (router_upload_descriptor_to_blockchain(ri) == 0) {
       log_info(LD_DIR, "Relay upload failure.");
       return false;
-    }    
+    }
+    
+    
   }
 
   routerinfo_free(desc_routerinfo);
