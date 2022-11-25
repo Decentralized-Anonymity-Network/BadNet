@@ -5,7 +5,7 @@ RunAsDaemon 1
 ConnLimit 60
 Nickname XXX
 ShutdownWaitLength 0
-PidFile /usr/local/BADNet-relay/lib/pid
+PidFile /usr/local/BADNET-V3-relay/lib/pid
 Log notice file /usr/local/BADNET-V3-relay/log/notice.log
 Log info file /usr/local/BADNET-V3-relay/log/info.log
 Log debug file /usr/local/BADNET-V3-relay/log/debug.log
