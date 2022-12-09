@@ -33,7 +33,7 @@ Update records (BADNET-0.3):
 
 <div style ="overflow-x:scroll;">
 
-Version<div style="width:90px"> | Blockchain<div style="width:120px">  | Contract Address | Ops | Date | Notes
+<div style="width:90px">Version</div> | <div style="width:120px">Blockchain</div> | Contract Address | Ops | Date | Notes
 ---|---|---|---|---|---
 BADNET-0.3 | Ropsten Testnet | 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D | HY | 20210815 |
 BADNET-1.0 | Goerli Testnet | 0x2C6DBBdB60C75d4E72ACfba11d2e5FCaf25F25c1 | HY | 20221119 |  
