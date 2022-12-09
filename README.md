@@ -33,13 +33,13 @@ Update records (BADNET-0.3):
 
 <div style ="overflow-x:scroll;">
 
-<div style="width:90px">Version</div> | <div style="width:120px">Blockchain</div> | Contract Address | Ops | Date | Notes
----|---|---|---|---|---
-BADNET-0.3 | Ropsten Testnet | 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D | HY | 20210815 |
-BADNET-1.0 | Goerli Testnet | 0x2C6DBBdB60C75d4E72ACfba11d2e5FCaf25F25c1 | HY | 20221119 |  
-BADNET-1.0 | Sepolia Testnet | 0xD6bfD430134759a0deebF58da785c116B524A968 | HY | 20221123 |  
-BADNET-1.0 | BSC Testnet |  | DC |  |  
-BADNET-1.0 | Mumbai Testnet |  | TZJ |  |  
+| <div style="width:90px">Version</div> | <div style="width:120px">Blockchain</div> | Contract Address | Ops | Date | Notes |
+| ---|---|---|---|---|--- |
+| BADNET-0.3 | Ropsten Testnet | 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D | HY | 20210815 |  |
+| BADNET-1.0 | Goerli Testnet | 0x2C6DBBdB60C75d4E72ACfba11d2e5FCaf25F25c1 | HY | 20221119 |  |  
+| BADNET-1.0 | Sepolia Testnet | 0xD6bfD430134759a0deebF58da785c116B524A968 | HY | 20221123 |  |
+| BADNET-1.0 | BSC Testnet |  | DC |  |  |
+| BADNET-1.0 | Mumbai Testnet |  | TZJ |  |  |  
 
 </div>
 
