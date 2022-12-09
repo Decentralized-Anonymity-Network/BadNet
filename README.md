@@ -34,7 +34,7 @@ Update records (BADNET-0.3):
 <div style ="overflow-x:scroll;">
 
 | BADNET Version | Testnet | Contract Address | Ops | Date | Notes |
-|---|---|---|---|---|---|
+|:---:|---|---|---|---|---|
 | 0.3 | Ropsten | 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D | HY | 20210815 | |
 | 1.0 | Goerli | 0x2C6DBBdB60C75d4E72ACfba11d2e5FCaf25F25c1 | HY | 20221119 | | 
 | 1.0 | Sepolia | 0xD6bfD430134759a0deebF58da785c116B524A968 | HY | 20221123 | |
