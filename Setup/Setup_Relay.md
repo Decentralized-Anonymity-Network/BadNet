@@ -43,7 +43,7 @@ cd BadNet
 vi BADNET.relay (fill in "Nickname", "OrPort" and "Address")
 cd BADNET
 sudo sh badnet_relay.sh (output is an Ethereum address)
-sudo ./configure --disable-asciidoc
+sudo ./configure --disable-asciidoc --with-zlib-dir=/usr/lib
 sudo make
 ```
 
