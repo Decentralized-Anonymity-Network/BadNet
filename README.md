@@ -19,17 +19,30 @@ Our project is currently maintaining a small-scale anonymity network, including 
 
 The prototype system is still being tested and continuously updated. Details of the current system are as follows:
 - Source Code: BADNET
-- Contract Address: [0x2C6DBBdB60C75d4E72ACfba11d2e5FCaf25F25c1](https://sepolia.etherscan.io/address/0xd6bfd430134759a0deebf58da785c116b524a968)
+- Contract Address: [0xD6bfD430134759a0deebF58da785c116B524A968](https://sepolia.etherscan.io/address/0xd6bfd430134759a0deebf58da785c116b524a968)
 - Deployment Date: November 23th, 2022
 - Number of Relays: 8
 - Descriptor's Upload Period: 10 minutes
 
 Update records (BADNET-0.3):
-- Contract Address: [0xD6bfD430134759a0deebF58da785c116B524A968](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
+- Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
 - Ethereum: Ropsten Testnet (already discontinued in October 2022)
 - Deployment Date: August 15th, 2021
 - Status: discontinued on October 5th, 2022
 - Total Number of transactions: 9,204
+
+<div style ="overflow-x:scroll;">
+
+Version<div style="width:90px"> | Blockchain<div style="width:110px">  | Contract Address | Ops | Date | Notes
+---|---|---|---|---|---
+BADNET-0.3 | Ropsten Testnet | 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D | HY | 20210815 |
+BADNET-1.0 | Goerli Testnet | 0x2C6DBBdB60C75d4E72ACfba11d2e5FCaf25F25c1 | HY | 20221119 |  
+BADNET-1.0 | Sepolia Testnet | 0xD6bfD430134759a0deebF58da785c116B524A968 | HY | 20221123 |  
+BADNET-1.0 | BSC Testnet |  | DC |  |  
+BADNET-1.0 | Mumbai Testnet |  | TZJ |  |  
+
+
+</div>
 
 ### Others
 - Sepolia Faucet: [FAUCETLINK](https://faucetlink.to/sepolia)
