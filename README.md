@@ -33,13 +33,13 @@ Update records (BADNET-0.3):
 
 <div style ="overflow-x:scroll;">
 
-| BADNET Version | Testnet | Contract Address | Ops | Date | Notes |
+| System Version | Testnet | Contract Address | Ops | Date | Notes |
 |:---:|---|---|---|---|---|
-| 0.3 | Ropsten | 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D | HY | 20210815 | |
-| 1.0 | Goerli | 0x2C6DBBdB60C75d4E72ACfba11d2e5FCaf25F25c1 | HY | 20221119 | | 
-| 1.0 | Sepolia | 0xD6bfD430134759a0deebF58da785c116B524A968 | HY | 20221123 | |
-| 1.0 | BSC | 0x | DC |  | |
-| 1.0 | Mumbai | 0x | TZJ |  | |  
+| BADNET-0.3 | Ropsten | 0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D | HY | 20210815 | |
+| BADNET-1.0 | Goerli | 0x2C6DBBdB60C75d4E72ACfba11d2e5FCaf25F25c1 | HY | 20221119 | | 
+| BADNET-1.0 | Sepolia | 0xD6bfD430134759a0deebF58da785c116B524A968 | HY | 20221123 | |
+| BADNET-1.0 | BSC | 0x91123B38E7622430465050ccfC0b3b30Fd7e2199 | DC |  | |
+| BADNET-1.0 | Mumbai | 0x | TZJ |  | |  
 
 </div>
 
