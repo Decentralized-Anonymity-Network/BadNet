@@ -18,7 +18,7 @@ AES_CBC_IV = b'qqqqqqqqqqqqqqqq'
 path = '/usr/local/BADNET-V3-relay/'
 
 Counter = 1
-relaySet = []
+relaySet = list()
 
 
 # ============ Registration ============
@@ -60,8 +60,7 @@ def relayGetCurrentCounter():
 
 def relayGetSet():
     relayTotalNum, UnhealthySet = relayGetIndexSet()
-    global relaySet
-    relaySet = []
+    relaySet.clear()
     for i in range(1, relayTotalNum):
         if i not in UnhealthySet:
             relaySet.append(i)
