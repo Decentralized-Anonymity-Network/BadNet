@@ -18,23 +18,15 @@ git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 ### Quick auto setup
 ```bat
 cd BADNet
-sudo sh badnet.sh (Note that output is an Ethereum address)
+sudo sh badnet.sh
 sudo ./configure
 sudo make
 ```
-
-Get rETH (Ropsten Ether) with generated address from
-[Faucet1](https://faucet.dimensions.network/), [Faucet2](https://faucet.egorfine.com/), or [Faucet3](https://faucet.metamask.io/).
 
 ### Running BADNET client
 ```bat
 cd src/app
 sudo ./tor -f /usr/local/BADNet-client/BADNet.client
-```
-
-Normally, after waiting for one periods (i.e., 1 hour) to ensure that MSRI has content, the client can start using BADNet for anonymous communication. (Unfortunately,  this process may take more time due to the instability of the Ropsten Testnet.)
-```bat
-sudo cat /usr/local/BADNet-client/lib/MSRI
 ```
 
 ### Using BADNET in Google Chrome
