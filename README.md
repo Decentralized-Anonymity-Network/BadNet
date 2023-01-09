@@ -22,7 +22,7 @@ The prototype system is still being tested and continuously updated. Details of 
 - Contract Address: [0xD6bfD430134759a0deebF58da785c116B524A968](https://sepolia.etherscan.io/address/0xd6bfd430134759a0deebf58da785c116b524a968)
 - Deployment Date: November 23th, 2022
 - Number of Relays: 8
-- Descriptor's Upload Period: 10 minutes
+- Descriptor's Upload Period: 1 hour
 
 Update records (BADNET-0.3):
 - Contract Address: [0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D](https://ropsten.etherscan.io/address/0xC8fE2CEAc93Ad50e496B497357AE5385192Dd28D)
