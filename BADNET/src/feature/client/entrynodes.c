@@ -1164,7 +1164,7 @@ entry_guards_expand_sample(guard_selection_t *gs)
   const or_options_t *options = get_options();
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   /*
   if (reasonably_live_consensus_is_missing(gs)) {
