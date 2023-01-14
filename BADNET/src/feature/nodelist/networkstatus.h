@@ -23,11 +23,9 @@ tor_mmap_t *networkstatus_map_cached_consensus(const char *flavorname);
 int router_reload_consensus_networkstatus(void);
 
 // ************
-// BADNet
+// BADNET
 // ************
-int download_MSRI_with_keys_from_blockchain(void);
-int RIA_update(void);
-int check_current_RIA_length(void);
+int download_NSD_from_blockchain(void);
 
 void routerstatus_free_(routerstatus_t *rs);
 #define routerstatus_free(rs) \
