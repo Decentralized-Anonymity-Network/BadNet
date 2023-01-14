@@ -717,7 +717,7 @@ nodelist_set_consensus(const networkstatus_t *ns)
     if (ns->flavor == FLAV_MICRODESC) {
 
       // ************
-      // BADNet
+      // BADNET
       // ************
       /*
       if (node->md == NULL ||
@@ -744,7 +744,7 @@ nodelist_set_consensus(const networkstatus_t *ns)
     }
 
     // ************
-    // BADNet
+    // BADNET
     // ************
     /*
     if (rs->pv.supports_v3_hsdir) {
@@ -938,7 +938,7 @@ nodelist_purge(void)
   }
 
   // ************
-  // BADNet
+  // BADNET
   // ************  
   // nodelist_assert_ok();
 }
@@ -2548,7 +2548,7 @@ count_usable_descriptors(int *num_present, int *num_usable,
          ++*num_usable; /* the consensus says we want it. */
          if (md) {
            // ************
-           // BADNet
+           // BADNET
            // ************
            // present = NULL != microdesc_cache_lookup_by_digest256(NULL, digest);
            present = 1;
