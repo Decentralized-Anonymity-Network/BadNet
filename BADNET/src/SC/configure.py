@@ -32,11 +32,23 @@ def relay_get_upload_period():
     return contract_instance.functions.relay_get_upload_period().call()
 
 
+def main(argv):
+    if argv[1] == 'client':
+        path = '/usr/local/BADNET-V3-client/'
+        with open(path, mode='w') as filename:
+            filename.write('contract_address = "' + contract_address + '"' + '\n\n')
+
+    elif argv[1] == 'relay':
+        path = '/usr/local/BADNET-V3-relay/'
+        create_account(path + 'SC/account.py')
+        """
+        RelayUploadPeriod = relay_get_upload_period()
+        with open(path + 'BADNET.relay', mode='a') as filename:
+            filename.write('\n' + 'RelayUploadPeriod ' + str(RelayUploadPeriod))
+        """
+    else:
+        print('Argument error!')
+
+
 if __name__ == '__main__':
-    path = '/usr/local/BADNET-V3-relay/'
-    create_account(path + 'SC/account.py')
-    """
-    RelayUploadPeriod = relay_get_upload_period()
-    with open(path + 'BADNET.relay', mode='a') as filename:
-        filename.write('\n' + 'RelayUploadPeriod ' + str(RelayUploadPeriod))
-    """
+     main(sys.argv)
