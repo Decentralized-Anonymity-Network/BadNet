@@ -43,7 +43,7 @@
 #include <math.h>
 
 // ************
-// BADNet
+// BADNET
 // ************
 #include "lib/crypt_ops/crypto_curve25519.h"
 #include "lib/crypt_ops/crypto_ed25519.h"
@@ -53,7 +53,7 @@
 // clang-format off
 static token_rule_t rtrstatus_token_table[] = {
   // ************
-  // BADNet
+  // BADNET
   // ************
   /*
   T01("p",                   K_P,               CONCAT_ARGS, NO_OBJ ),
@@ -349,7 +349,7 @@ routerstatus_parse_entry_from_string(memarea_t *area,
   }
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   tok = find_by_keyword(tokens, K_R);
   // tor_assert(tok->n_args >= 7); /* guaranteed by GE(7) in K_R setup */
@@ -1008,7 +1008,7 @@ networkstatus_parse_vote_from_string(const char *s,
     *eos_out = NULL;
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   ns = tor_malloc_zero(sizeof(networkstatus_t));
 
