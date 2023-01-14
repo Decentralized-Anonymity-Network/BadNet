@@ -1722,7 +1722,7 @@ second_elapsed_callback(time_t now, const or_options_t *options)
   const int have_dir_info = router_have_minimum_dir_info();
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   /*  
   if (have_dir_info && !net_is_disabled()) {
@@ -2067,10 +2067,9 @@ prune_old_routers_callback(time_t now, const or_options_t *options)
 }
 
 // ************
-// BADNet
+// BADNET
 // ************
-static int MSRI_download_times = 0;
-static int RIA_update_times = 0;
+static int NSD_download_times = 0;
 
 /**
  * Periodic event: once a minute, (or every second if TestingTorNetwork, or
@@ -2090,7 +2089,7 @@ fetch_networkstatus_callback(time_t now, const or_options_t *options)
    * (connection limits prevent too many connections being made) */
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   /*
   if (options->TestingTorNetwork
@@ -2107,23 +2106,13 @@ fetch_networkstatus_callback(time_t now, const or_options_t *options)
   const int is_client = options_any_client_port_set(options) || !is_server;
 
   if (is_client){
-    if (MSRI_download_times == 59){
-      check_current_RIA_length();
-      download_MSRI_with_keys_from_blockchain();
-      MSRI_download_times = 0; 
-      log_info(LD_DIR, "Periodic callback: client downloads MSRI.");
+    if (NSD_download_times == 60){
+      download_NSD_from_blockchain();
+      NSD_download_times = 0; 
+      log_info(LD_DIR, "Periodic callback: client downloads NSD.");
       router_reload_consensus_networkstatus();
     } else {
-      MSRI_download_times++;
-    }
-
-    if (RIA_update_times == 60*24*7) {
-      RIA_update();
-      RIA_update_times = 0;
-      log_info(LD_DIR, "Periodic callback: client updates RIA.");
-      check_current_RIA_length();
-    } else {
-      RIA_update_times++;
+      NSD_download_times++;
     }
   }
 
