@@ -26,7 +26,7 @@ git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 ```bat
 cd BadNet/BADNET
 sudo sh badnet.sh
-sudo ./configure
+sudo ./configure --with-zlib-dir=/usr/lib
 sudo make
 ```
 
