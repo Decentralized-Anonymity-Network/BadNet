@@ -1,3 +1,4 @@
+Binary files tor-0.4.6.5/.DS_Store and BADNET/.DS_Store differ
 diff -urN tor-0.4.6.5/Makefile.in BADNET/Makefile.in
 --- tor-0.4.6.5/Makefile.in	2021-06-10 21:49:33
 +++ BADNET/Makefile.in	2022-04-23 16:43:11
@@ -21,7 +22,7 @@ diff -urN tor-0.4.6.5/Makefile.in BADNET/Makefile.in
  	src/feature/relay/transport_config.h \
 diff -urN tor-0.4.6.5/badnet.sh BADNET/badnet.sh
 --- tor-0.4.6.5/badnet.sh	1970-01-01 08:00:00
-+++ BADNET/badnet.sh	2022-05-16 15:36:06
++++ BADNET/badnet.sh	2021-08-10 13:51:13
 @@ -0,0 +1,17 @@
 +#!/bin/sh
 +
@@ -40,30 +41,9 @@ diff -urN tor-0.4.6.5/badnet.sh BADNET/badnet.sh
 +cd /usr/local/BADNet-client/SC
 +python3 configure.py client
 +cd $path
-diff -urN tor-0.4.6.5/badnet_relay.sh BADNET/badnet_relay.sh
---- tor-0.4.6.5/badnet_relay.sh	1970-01-01 08:00:00
-+++ BADNET/badnet_relay.sh	2022-05-16 15:36:06
-@@ -0,0 +1,17 @@
-+#!/bin/sh
-+
-+path=`pwd`
-+aclocal
-+autoconf
-+autoheader
-+automake
-+mkdir -p /usr/local/BADNet-relay/lib/keys
-+cp -r src/SC/ /usr/local/BADNet-relay
-+cd ..
-+cp BADNet.relay /usr/local/BADNet-relay
-+mkdir -p /usr/local/BADNet-relay/log
-+cd /usr/local/BADNet-relay/log/
-+touch notice.log info.log debug.log blockchain.log
-+cd /usr/local/BADNet-relay/SC
-+python3 configure.py relay
-+cd $path
 diff -urN tor-0.4.6.5/configure.ac BADNET/configure.ac
 --- tor-0.4.6.5/configure.ac	2021-06-08 01:32:36
-+++ BADNET/configure.ac	2022-11-18 19:51:31
++++ BADNET/configure.ac	2022-04-23 13:31:44
 @@ -1252,7 +1252,7 @@
  tor_zlib_devpkg_redhat="zlib-devel"
  tor_zlib_devpkg_debian="zlib1g-dev"
@@ -85,8 +65,8 @@ diff -urN tor-0.4.6.5/configure.ac BADNET/configure.ac
 Binary files tor-0.4.6.5/src/.DS_Store and BADNET/src/.DS_Store differ
 diff -urN tor-0.4.6.5/src/SC/Client.py BADNET/src/SC/Client.py
 --- tor-0.4.6.5/src/SC/Client.py	1970-01-01 08:00:00
-+++ BADNET/src/SC/Client.py	2022-11-09 17:56:35
-@@ -0,0 +1,26 @@
++++ BADNET/src/SC/Client.py	2023-01-14 12:02:52
+@@ -0,0 +1,27 @@
 +from web3 import Web3, HTTPProvider
 +
 +import contract_abi
@@ -95,28 +75,29 @@ diff -urN tor-0.4.6.5/src/SC/Client.py BADNET/src/SC/Client.py
 +from Crypto.Cipher import AES
 +from ecies import decrypt
 +
-+web3 = Web3(HTTPProvider("https://goerli.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
++web3 = Web3(HTTPProvider("https://sepolia.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
 +contract_instance = web3.eth.contract(address=account.contract_address, abi=contract_abi.abi)
 +path = '/usr/local/BADNET-V3-client/'
 +
 +
 +def clientDownloadNSD():
 +    filePath = path + "lib/NSD"
-+    if os.path.exists(filePath):
-+        os.remove(filePath)
 +
-+    bytesLocal = 0
 +    NSDIndex, _NSD = contract_instance.functions.client_download_NSD().call()
 +    NSD = binascii.hexlify(_NSD)
-+    for relayID in range(0, len(NSDIndex)):
-+        if NSDIndex[relayID]:
-+            with open(filePath, mode='a') as filename:
-+                filename.write(relayID + ' ' + NSD[bytesLocal*64:(bytesLocal+1)*64] + '\n')
-+                bytesLocal += 1
++
++    with open(filePath, mode='w') as filename:
++        local = 0
++        for relayID in range(0, len(NSDIndex)):
++            if NSDIndex[relayID]:
++                filename.write(str(relayID+1) + ' ')
++                SRIHash = NSD[local*64:(local+1)*64]
++                filename.write(SRIHash.decode() + '\n')
++                local += 1
 diff -urN tor-0.4.6.5/src/SC/Relay.py BADNET/src/SC/Relay.py
 --- tor-0.4.6.5/src/SC/Relay.py	1970-01-01 08:00:00
-+++ BADNET/src/SC/Relay.py	2022-11-18 19:40:41
-@@ -0,0 +1,167 @@
++++ BADNET/src/SC/Relay.py	2023-01-07 22:00:57
+@@ -0,0 +1,181 @@
 +from web3 import Web3, HTTPProvider
 +import contract_abi
 +import account
@@ -131,27 +112,26 @@ diff -urN tor-0.4.6.5/src/SC/Relay.py BADNET/src/SC/Relay.py
 +import secrets
 +from ecies import encrypt
 +
-+web3 = Web3(HTTPProvider("https://goerli.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
++web3 = Web3(HTTPProvider("https://sepolia.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
 +contract_instance = web3.eth.contract(address=account.contract_address, abi=contract_abi.abi)
 +AES_CBC_IV = b'qqqqqqqqqqqqqqqq'
 +path = '/usr/local/BADNET-V3-relay/'
 +
 +Counter = 1
-+relaySet = []
++relaySet = list()
 +
 +
 +# ============ Registration ============
 +
 +def relayRegistrationCheck():
-+    flag = contract_instance.functions.relay_registration_check().call({'from': account.wallet_addr})
-+    return 1 if flag else 0
++    return contract_instance.functions.relay_registration_check().call({'from': account.wallet_addr})
 +
 +
 +def relayRegister():
 +    start = time.time()
 +    txn = contract_instance.functions.relay_register().buildTransaction(
 +        {
-+            'chainId': 5,
++            'chainId': 11155111,
 +            'nonce': web3.eth.getTransactionCount(account.wallet_addr),
 +            'gas': 3000000,
 +            'value': Web3.toWei(0, 'ether'),
@@ -180,11 +160,11 @@ diff -urN tor-0.4.6.5/src/SC/Relay.py BADNET/src/SC/Relay.py
 +
 +def relayGetSet():
 +    relayTotalNum, UnhealthySet = relayGetIndexSet()
-+    global relaySet
-+    relaySet = []
++    relaySet.clear()
 +    for i in range(1, relayTotalNum):
-+        if i not in UnhealthySet:
-+            relaySet.append(i)
++        relaySet.append(i)
++    for i in UnhealthySet:
++        relaySet.remove(i)
 +    global Counter
 +    Counter = relayGetCurrentCounter()
 +    return Counter, relaySet
@@ -221,7 +201,7 @@ diff -urN tor-0.4.6.5/src/SC/Relay.py BADNET/src/SC/Relay.py
 +    start = time.time()
 +    txn = contract_instance.functions.relay_upload_SRI_and_NSD(_Counter, _HDR, _enSRI, _NSD).buildTransaction(
 +        {
-+            'chainId': 5,
++            'chainId': 11155111,
 +            'nonce': web3.eth.getTransactionCount(account.wallet_addr),
 +            'gas': 3000000,
 +            'value': Web3.toWei(0, 'ether'),
@@ -247,7 +227,15 @@ diff -urN tor-0.4.6.5/src/SC/Relay.py BADNET/src/SC/Relay.py
 +# ============ SRI Download & Decryption  ============
 +
 +def relayGetCounterList(index):
-+    return contract_instance.functions.relay_get_counter_list(index).call({'from': account.wallet_addr})
++    operation, alterSet = contract_instance.functions.relay_get_counter_list(index).call({'from': account.wallet_addr})
++    addSet = []
++    deleteSet = []
++    for i in range(0, len(operation)):
++        if operation[i]:
++            deleteSet += alterSet[i]
++        else:
++            addSet += alterSet[i]
++    return addSet, deleteSet
 +
 +
 +def relayDownloadSRIHelper(index):
@@ -257,11 +245,13 @@ diff -urN tor-0.4.6.5/src/SC/Relay.py BADNET/src/SC/Relay.py
 +
 +def relayDownloadSRI(relayID):
 +    relayCounter, Hdr, relayEnSRI = relayDownloadSRIHelper(relayID)
-+    S = relaySet
++    S = relaySet.copy()
 +    if relayCounter < Counter:
-+        addSet = relayGetCounterList(relayCounter)
-+        for j in range(0, len(addSet)):
-+            S += addSet[j]
++        addSet, deleteSet = relayGetCounterList(relayCounter)
++        for i in range(0, len(addSet)):
++            S += addSet[i]
++        for j in range(0, len(deleteSet)):
++            S.remove(deleteSet[j])
 +    relayHdr = re.findall(r'.{130}', Hdr)
 +    return S, relayHdr, relayEnSRI
 +
@@ -276,18 +266,23 @@ diff -urN tor-0.4.6.5/src/SC/Relay.py BADNET/src/SC/Relay.py
 +
 +def relayDecryptSRIs(relayID, enSRI, decKey, fileEnd):
 +    AES_Key = bytes(decKey[0:32].encode())
-+    _SRI = AES_decrypt(enSRI, AES_Key)
-+    with open('NIME-cached', mode='a') as filename:
-+        filename.write(str(relayID) + '\n')
-+        filename.write(_SRI + '\n')
++    try:
++        _SRI = AES_decrypt(enSRI, AES_Key)
++    except UnicodeDecodeError:
++        return
++    else:
++        with open(path + 'lib/NIME-cached', mode='a') as filename:
++            filename.write("index " + str(relayID) + '\n')
++            filename.write(_SRI)
 +    if fileEnd == 1:
-+        if os.path.exists('NIME'):
-+            os.remove('NIME')
-+        os.rename("NIME-cached", "NIME")
++        if os.path.exists(path + 'lib/NIME'):
++            os.remove(path + 'lib/NIME')
++        if os.path.exists(path + 'lib/NIME-cached'):
++            os.rename(path + 'lib/NIME-cached', path + 'lib/NIME')
 diff -urN tor-0.4.6.5/src/SC/configure.py BADNET/src/SC/configure.py
 --- tor-0.4.6.5/src/SC/configure.py	1970-01-01 08:00:00
-+++ BADNET/src/SC/configure.py	2022-11-09 17:51:59
-@@ -0,0 +1,39 @@
++++ BADNET/src/SC/configure.py	2023-01-14 16:15:22
+@@ -0,0 +1,54 @@
 +import sys
 +import binascii
 +from ecies.utils import generate_key
@@ -296,13 +291,13 @@ diff -urN tor-0.4.6.5/src/SC/configure.py BADNET/src/SC/configure.py
 +from web3 import Web3, HTTPProvider
 +import contract_abi
 +
-+contract_address = "0xe7BC117CE3439e32549115f049d3D17A17EC03c8"
-+web3 = Web3(HTTPProvider("https://goerli.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
++
++contract_address = "0xD6bfD430134759a0deebF58da785c116B524A968"
++web3 = Web3(HTTPProvider("https://sepolia.infura.io/v3/67631e6ab6fc44e49915da74fd957740"))
 +contract_instance = web3.eth.contract(address=contract_address, abi=contract_abi.abi)
-+path = '/usr/local/BADNET-V3-relay/'
 +
 +
-+def relayCreateAccount(path):
++def create_account(path):
 +    secp_k = generate_key()
 +    wallet_private_key = binascii.hexlify(secp_k.secret).decode('utf-8')
 +    public_key = secp_k.public_key.format(True)
@@ -318,106 +313,35 @@ diff -urN tor-0.4.6.5/src/SC/configure.py BADNET/src/SC/configure.py
 +    print(wallet_addr)
 +
 +
-+def relayGetUploadPeriod():
-+    return contract_instance.functions.relay_get_upload_period().call({'from': account.wallet_addr})
++def relay_get_upload_period():
++    return contract_instance.functions.relay_get_upload_period().call()
++
++
++def main(argv):
++    if argv[1] == 'client':
++        path = '/usr/local/BADNET-V3-client/SC/account.py'
++        with open(path, mode='w') as filename:
++            filename.write('contract_address = "' + contract_address + '"' + '\n')
++
++    elif argv[1] == 'relay':
++        path = '/usr/local/BADNET-V3-relay/'
++        create_account(path + 'SC/account.py')
++        """
++        RelayUploadPeriod = relay_get_upload_period()
++        with open(path + 'BADNET.relay', mode='a') as filename:
++            filename.write('\n' + 'RelayUploadPeriod ' + str(RelayUploadPeriod))
++        """
++    else:
++        print('Argument error!')
 +
 +
 +if __name__ == '__main__':
-+    relayCreateAccount(path + 'SC/account.py')
-+    RelayUploadPeriod = relayGetUploadPeriod()
-+    with open(path + 'BADNET.relay', mode='a') as filename:
-+        filename.write('\n' + 'RelayUploadPeriod ' + str(RelayUploadPeriod))
++     main(sys.argv)
 diff -urN tor-0.4.6.5/src/SC/contract_abi.py BADNET/src/SC/contract_abi.py
 --- tor-0.4.6.5/src/SC/contract_abi.py	1970-01-01 08:00:00
-+++ BADNET/src/SC/contract_abi.py	2022-11-18 19:40:13
-@@ -0,0 +1,309 @@
++++ BADNET/src/SC/contract_abi.py	2022-11-23 19:21:16
+@@ -0,0 +1,314 @@
 +abi = [
-+	{
-+		"inputs": [
-+			{
-+				"internalType": "address payable",
-+				"name": "addr",
-+				"type": "address"
-+			}
-+		],
-+		"name": "contract_transfer_to_relay",
-+		"outputs": [],
-+		"stateMutability": "payable",
-+		"type": "function"
-+	},
-+	{
-+		"inputs": [
-+			{
-+				"internalType": "uint16",
-+				"name": "size",
-+				"type": "uint16"
-+			},
-+			{
-+				"internalType": "uint16[]",
-+				"name": "list",
-+				"type": "uint16[]"
-+			}
-+		],
-+		"name": "modifyHealthFlag",
-+		"outputs": [],
-+		"stateMutability": "nonpayable",
-+		"type": "function"
-+	},
-+	{
-+		"inputs": [],
-+		"name": "relay_cancellation",
-+		"outputs": [],
-+		"stateMutability": "nonpayable",
-+		"type": "function"
-+	},
-+	{
-+		"inputs": [],
-+		"name": "relay_register",
-+		"outputs": [],
-+		"stateMutability": "nonpayable",
-+		"type": "function"
-+	},
-+	{
-+		"inputs": [
-+			{
-+				"internalType": "uint8",
-+				"name": "_counter",
-+				"type": "uint8"
-+			},
-+			{
-+				"internalType": "bytes",
-+				"name": "_Hdr",
-+				"type": "bytes"
-+			},
-+			{
-+				"internalType": "bytes",
-+				"name": "_encryptedSRI",
-+				"type": "bytes"
-+			},
-+			{
-+				"internalType": "bytes",
-+				"name": "_NSD",
-+				"type": "bytes"
-+			}
-+		],
-+		"name": "relay_upload_SRI_and_NSD",
-+		"outputs": [],
-+		"stateMutability": "nonpayable",
-+		"type": "function"
-+	},
-+	{
-+		"inputs": [
-+			{
-+				"internalType": "uint256",
-+				"name": "period",
-+				"type": "uint256"
-+			}
-+		],
-+		"name": "setSRIperiod",
-+		"outputs": [],
-+		"stateMutability": "nonpayable",
-+		"type": "function"
-+	},
 +	{
 +		"inputs": [],
 +		"stateMutability": "nonpayable",
@@ -426,10 +350,6 @@ diff -urN tor-0.4.6.5/src/SC/contract_abi.py BADNET/src/SC/contract_abi.py
 +	{
 +		"stateMutability": "payable",
 +		"type": "fallback"
-+	},
-+	{
-+		"stateMutability": "payable",
-+		"type": "receive"
 +	},
 +	{
 +		"inputs": [],
@@ -447,6 +367,19 @@ diff -urN tor-0.4.6.5/src/SC/contract_abi.py BADNET/src/SC/contract_abi.py
 +			}
 +		],
 +		"stateMutability": "view",
++		"type": "function"
++	},
++	{
++		"inputs": [
++			{
++				"internalType": "address payable",
++				"name": "addr",
++				"type": "address"
++			}
++		],
++		"name": "contract_transfer_to_relay",
++		"outputs": [],
++		"stateMutability": "payable",
 +		"type": "function"
 +	},
 +	{
@@ -519,6 +452,31 @@ diff -urN tor-0.4.6.5/src/SC/contract_abi.py BADNET/src/SC/contract_abi.py
 +		"inputs": [
 +			{
 +				"internalType": "uint16",
++				"name": "size",
++				"type": "uint16"
++			},
++			{
++				"internalType": "uint16[]",
++				"name": "list",
++				"type": "uint16[]"
++			}
++		],
++		"name": "modifyHealthFlag",
++		"outputs": [],
++		"stateMutability": "nonpayable",
++		"type": "function"
++	},
++	{
++		"inputs": [],
++		"name": "relay_cancellation",
++		"outputs": [],
++		"stateMutability": "nonpayable",
++		"type": "function"
++	},
++	{
++		"inputs": [
++			{
++				"internalType": "uint16",
 +				"name": "i",
 +				"type": "uint16"
 +			}
@@ -554,6 +512,11 @@ diff -urN tor-0.4.6.5/src/SC/contract_abi.py BADNET/src/SC/contract_abi.py
 +		],
 +		"name": "relay_get_counter_list",
 +		"outputs": [
++			{
++				"internalType": "bool[]",
++				"name": "",
++				"type": "bool[]"
++			},
 +			{
 +				"internalType": "uint16[][]",
 +				"name": "",
@@ -609,15 +572,63 @@ diff -urN tor-0.4.6.5/src/SC/contract_abi.py BADNET/src/SC/contract_abi.py
 +	},
 +	{
 +		"inputs": [],
++		"name": "relay_register",
++		"outputs": [],
++		"stateMutability": "nonpayable",
++		"type": "function"
++	},
++	{
++		"inputs": [],
 +		"name": "relay_registration_check",
 +		"outputs": [
 +			{
-+				"internalType": "bool",
++				"internalType": "uint16",
 +				"name": "",
-+				"type": "bool"
++				"type": "uint16"
 +			}
 +		],
 +		"stateMutability": "view",
++		"type": "function"
++	},
++	{
++		"inputs": [
++			{
++				"internalType": "uint8",
++				"name": "_counter",
++				"type": "uint8"
++			},
++			{
++				"internalType": "bytes",
++				"name": "_Hdr",
++				"type": "bytes"
++			},
++			{
++				"internalType": "bytes",
++				"name": "_encryptedSRI",
++				"type": "bytes"
++			},
++			{
++				"internalType": "bytes",
++				"name": "_NSD",
++				"type": "bytes"
++			}
++		],
++		"name": "relay_upload_SRI_and_NSD",
++		"outputs": [],
++		"stateMutability": "nonpayable",
++		"type": "function"
++	},
++	{
++		"inputs": [
++			{
++				"internalType": "uint256",
++				"name": "period",
++				"type": "uint256"
++			}
++		],
++		"name": "setSRIperiod",
++		"outputs": [],
++		"stateMutability": "nonpayable",
 +		"type": "function"
 +	},
 +	{
@@ -638,18 +649,22 @@ diff -urN tor-0.4.6.5/src/SC/contract_abi.py BADNET/src/SC/contract_abi.py
 +		],
 +		"stateMutability": "view",
 +		"type": "function"
++	},
++	{
++		"stateMutability": "payable",
++		"type": "receive"
 +	}
 +]
 diff -urN tor-0.4.6.5/src/core/mainloop/mainloop.c BADNET/src/core/mainloop/mainloop.c
 --- tor-0.4.6.5/src/core/mainloop/mainloop.c	2021-04-16 00:41:14
-+++ BADNET/src/core/mainloop/mainloop.c	2022-11-06 15:53:25
++++ BADNET/src/core/mainloop/mainloop.c	2023-01-14 15:22:37
 @@ -1720,11 +1720,18 @@
     *    and we make a new circ if there are no clean circuits.
     */
    const int have_dir_info = router_have_minimum_dir_info();
 +
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  /*  
    if (have_dir_info && !net_is_disabled()) {
@@ -662,32 +677,31 @@ diff -urN tor-0.4.6.5/src/core/mainloop/mainloop.c BADNET/src/core/mainloop/main
  
    /* 5. We do housekeeping for each connection... */
    channel_update_bad_for_new_circs(NULL, 0);
-@@ -2059,6 +2066,12 @@
+@@ -2059,6 +2066,11 @@
    return ROUTERLIST_PRUNING_INTERVAL;
  }
  
 +// ************
-+// BADNet
++// BADNET
 +// ************
-+static int MSRI_download_times = 0;
-+static int RIA_update_times = 0;
++static int NSD_download_times = 60;
 +
  /**
   * Periodic event: once a minute, (or every second if TestingTorNetwork, or
   * during client bootstrap), check whether we want to download any
-@@ -2075,6 +2088,11 @@
+@@ -2075,6 +2087,11 @@
    int networkstatus_dl_check_interval = 60;
    /* check more often when testing, or when bootstrapping from mirrors
     * (connection limits prevent too many connections being made) */
 +
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  /*
    if (options->TestingTorNetwork
        || (we_are_bootstrapping && prefer_mirrors)) {
      networkstatus_dl_check_interval = 1;
-@@ -2084,6 +2102,31 @@
+@@ -2084,6 +2101,22 @@
      return PERIODIC_EVENT_NO_UPDATE;
  
    update_networkstatus_downloads(now);
@@ -696,23 +710,14 @@ diff -urN tor-0.4.6.5/src/core/mainloop/mainloop.c BADNET/src/core/mainloop/main
 +  const int is_client = options_any_client_port_set(options) || !is_server;
 +
 +  if (is_client){
-+    if (MSRI_download_times == 59){
-+      check_current_RIA_length();
-+      download_MSRI_with_keys_from_blockchain();
-+      MSRI_download_times = 0; 
-+      log_info(LD_DIR, "Periodic callback: client downloads MSRI.");
-+      router_reload_consensus_networkstatus();
++    if (NSD_download_times == 60) {
++      if(download_NSD_from_blockchain()) {
++        log_info(LD_DIR, "Periodic callback: client downloads NSD.");
++        NSD_download_times = 0;
++        router_reload_consensus_networkstatus();
++      }
 +    } else {
-+      MSRI_download_times++;
-+    }
-+
-+    if (RIA_update_times == 60*24*7) {
-+      RIA_update();
-+      RIA_update_times = 0;
-+      log_info(LD_DIR, "Periodic callback: client updates RIA.");
-+      check_current_RIA_length();
-+    } else {
-+      RIA_update_times++;
++      NSD_download_times++;
 +    }
 +  }
 +
@@ -721,7 +726,7 @@ diff -urN tor-0.4.6.5/src/core/mainloop/mainloop.c BADNET/src/core/mainloop/main
  
 diff -urN tor-0.4.6.5/src/core/or/connection_or.c BADNET/src/core/or/connection_or.c
 --- tor-0.4.6.5/src/core/or/connection_or.c	2021-04-16 00:41:14
-+++ BADNET/src/core/or/connection_or.c	2022-05-16 15:36:06
++++ BADNET/src/core/or/connection_or.c	2021-08-10 20:44:54
 @@ -813,6 +813,11 @@
  int
  connection_or_digest_is_known_relay(const char *id_digest)
@@ -734,15 +739,16 @@ diff -urN tor-0.4.6.5/src/core/or/connection_or.c BADNET/src/core/or/connection_
    if (router_get_consensus_status_by_id(id_digest))
      return 1; /* It's in the consensus: "yes" */
    if (router_get_by_id_digest(id_digest))
+Binary files tor-0.4.6.5/src/feature/.DS_Store and BADNET/src/feature/.DS_Store differ
 diff -urN tor-0.4.6.5/src/feature/client/entrynodes.c BADNET/src/feature/client/entrynodes.c
 --- tor-0.4.6.5/src/feature/client/entrynodes.c	2021-04-16 00:41:14
-+++ BADNET/src/feature/client/entrynodes.c	2022-05-16 15:36:07
++++ BADNET/src/feature/client/entrynodes.c	2023-01-14 12:43:47
 @@ -1163,11 +1163,16 @@
    tor_assert(gs);
    const or_options_t *options = get_options();
  
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  /*
    if (reasonably_live_consensus_is_missing(gs)) {
@@ -756,7 +762,7 @@ diff -urN tor-0.4.6.5/src/feature/client/entrynodes.c BADNET/src/feature/client/
    entry_guard_t *added_guard = NULL;
 diff -urN tor-0.4.6.5/src/feature/dirclient/dirclient.c BADNET/src/feature/dirclient/dirclient.c
 --- tor-0.4.6.5/src/feature/dirclient/dirclient.c	2021-06-02 00:16:24
-+++ BADNET/src/feature/dirclient/dirclient.c	2022-05-16 15:36:07
++++ BADNET/src/feature/dirclient/dirclient.c	2021-08-10 20:24:23
 @@ -1873,8 +1873,14 @@
    /* If we're pretty sure that we have a compressed directory, and
     * we didn't manage to uncompress it, then warn and bail. */
@@ -776,13 +782,13 @@ diff -urN tor-0.4.6.5/src/feature/dirclient/dirclient.c BADNET/src/feature/dircl
             description1,
 diff -urN tor-0.4.6.5/src/feature/dirparse/ns_parse.c BADNET/src/feature/dirparse/ns_parse.c
 --- tor-0.4.6.5/src/feature/dirparse/ns_parse.c	2021-04-16 00:41:14
-+++ BADNET/src/feature/dirparse/ns_parse.c	2022-05-16 15:36:07
++++ BADNET/src/feature/dirparse/ns_parse.c	2023-01-14 12:32:42
 @@ -42,10 +42,20 @@
  #undef log
  #include <math.h>
  
 +// ************
-+// BADNet
++// BADNET
 +// ************
 +#include "lib/crypt_ops/crypto_curve25519.h"
 +#include "lib/crypt_ops/crypto_ed25519.h"
@@ -792,7 +798,7 @@ diff -urN tor-0.4.6.5/src/feature/dirparse/ns_parse.c BADNET/src/feature/dirpars
  // clang-format off
  static token_rule_t rtrstatus_token_table[] = {
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  /*
    T01("p",                   K_P,               CONCAT_ARGS, NO_OBJ ),
@@ -816,7 +822,7 @@ diff -urN tor-0.4.6.5/src/feature/dirparse/ns_parse.c BADNET/src/feature/dirpars
    }
 +
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
    tok = find_by_keyword(tokens, K_R);
 -  tor_assert(tok->n_args >= 7); /* guaranteed by GE(7) in K_R setup */
@@ -1126,7 +1132,7 @@ diff -urN tor-0.4.6.5/src/feature/dirparse/ns_parse.c BADNET/src/feature/dirpars
 -  }
 -
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
    ns = tor_malloc_zero(sizeof(networkstatus_t));
 -  memcpy(&ns->digests, &ns_digests, sizeof(ns_digests));
@@ -1697,31 +1703,35 @@ diff -urN tor-0.4.6.5/src/feature/dirparse/ns_parse.c BADNET/src/feature/dirpars
  
    goto done;
   err:
+Binary files tor-0.4.6.5/src/feature/nodelist/.DS_Store and BADNET/src/feature/nodelist/.DS_Store differ
 diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/nodelist/networkstatus.c
 --- tor-0.4.6.5/src/feature/nodelist/networkstatus.c	2021-04-16 00:41:14
-+++ BADNET/src/feature/nodelist/networkstatus.c	2022-05-16 15:36:07
-@@ -108,6 +108,15 @@
++++ BADNET/src/feature/nodelist/networkstatus.c	2023-01-14 15:41:48
+@@ -108,6 +108,18 @@
  #include <unistd.h>
  #endif
  
 +// ************
-+// BADNet
++// BADNET
 +// ************
 +#include "/usr/include/python3.6m/Python.h"
 +#include "core/or/circuitlist.h"
 +#include <sys/stat.h>
++
++#define clientPath "/usr/local/BADNET-V3-client/"
++#define sysPath "sys.path.append('/usr/local/BADNET-V3-client/SC/')"
++
 +static bool python_is_initialized = false;
-+static bool client_is_registered = false;
 +
  /** Most recently received and validated v3 "ns"-flavored consensus network
   * status. */
  STATIC networkstatus_t *current_ns_consensus = NULL;
-@@ -288,10 +297,15 @@
+@@ -288,10 +300,15 @@
      tor_free(fname);
    }
  
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************  
 +  /*
    update_certificate_downloads(time(NULL));
@@ -1732,12 +1742,12 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
  
    return 0;
  }
-@@ -1443,10 +1457,16 @@
+@@ -1443,10 +1460,16 @@
    if (BUG(!consensus))
      return 0;
  
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  /*
    return networkstatus_valid_after_is_reasonably_live(consensus->valid_after,
@@ -1749,7 +1759,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
  }
  
  #define REASONABLY_LIVE_TIME (24*60*60)
-@@ -1680,12 +1700,16 @@
+@@ -1680,12 +1703,16 @@
     * the first thing we need to do is recalculate the voting schedule static
     * object so we can use the timings in there needed by some subsystems
     * such as hidden service and shared random. */
@@ -1757,7 +1767,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
 -  reschedule_dirvote(options);
  
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  // dirauth_sched_recalculate_timing(options, now);
 +  // reschedule_dirvote(options);
@@ -1769,7 +1779,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
  
    /* Change the cell EWMA settings */
    cmux_ewma_set_options(options, c);
-@@ -1698,7 +1722,7 @@
+@@ -1698,7 +1725,7 @@
                                   get_circuit_build_times_mutable(), c);
    channelpadding_new_consensus_params(c);
    circpad_new_consensus_params(c);
@@ -1778,79 +1788,15 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
  }
  
  /** Copy all the ancillary information (like router download status and so on)
-@@ -1760,6 +1784,253 @@
+@@ -1760,6 +1787,51 @@
  }
  #endif /* defined(TOR_UNIT_TESTS) */
  
 +// ************
-+// BADNet
++// BADNET
 +// ************
 +int 
-+client_register(void)
-+{
-+  int result = 0;
-+  if (python_is_initialized == false) {
-+    Py_Initialize();
-+    if (!Py_IsInitialized()) {
-+      log_info(LD_DIR, "Fatal Python error: Py_Initialize failed.");
-+      return result;
-+    }
-+    python_is_initialized = true;
-+  }
-+
-+  PyObject *pModule = NULL;
-+  PyObject *pDict = NULL;
-+  PyObject *pFunc = NULL;
-+  PyObject *pArgs = NULL;
-+  PyObject *pResVal = NULL;
-+
-+  PyRun_SimpleString("import sys");
-+  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-client/SC/')"); 
-+
-+  pModule = PyImport_ImportModule("Client");
-+  if (!pModule) {
-+    log_info(LD_DIR, "Fatal Python error: Load python file failed.");
-+    return result;
-+  }
-+  pDict = PyModule_GetDict(pModule);
-+  if (!pDict) {
-+    log_info(LD_DIR, "Fatal Python error: Can't find dict in python file.");
-+    return result;
-+  }
-+
-+  pFunc = PyDict_GetItemString(pDict, "client_registration_check");
-+  pResVal = PyObject_CallObject(pFunc, pArgs);
-+  long flag = PyLong_AsLong(pResVal);
-+
-+  if (flag == 1) {
-+    log_info(LD_DIR, "Client is already registered in the network."); 
-+    client_is_registered = true;
-+    result = 1;
-+  } else {
-+    log_info(LD_DIR, "Client is not yet registered in the network"); 
-+    pFunc = PyDict_GetItemString(pDict, "client_register");
-+    pResVal = PyObject_CallObject(pFunc, pArgs);
-+    log_info(LD_DIR, "Client is already registered in the network.");
-+    client_is_registered = true;
-+    result = 2;
-+
-+    pFunc = PyDict_GetItemString(pDict, "client_generate_random_index");
-+    pResVal = PyObject_CallObject(pFunc, pArgs);
-+    log_info(LD_DIR, "Client first time RIA generation.");
-+  }
-+
-+  Py_XDECREF(pModule);  
-+  Py_XDECREF(pArgs);
-+  Py_XDECREF(pResVal);
-+  //Py_Finalize();
-+  return result;
-+}
-+
-+// ************
-+// BADNet
-+// ************
-+int 
-+check_current_RIA_length(void)
++download_NSD_from_blockchain(void)
 +{
 +  if (python_is_initialized == false) {
 +    Py_Initialize();
@@ -1868,7 +1814,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
 +  PyObject *pResVal = NULL;
 +
 +  PyRun_SimpleString("import sys");
-+  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-client/SC/')"); 
++  PyRun_SimpleString(sysPath);
 +
 +  pModule = PyImport_ImportModule("Client");
 +  if (!pModule) {
@@ -1881,146 +1827,8 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
 +    return 0;
 +  }
 +
-+  pFunc = PyDict_GetItemString(pDict, "client_get_RIAlength");
++  pFunc = PyDict_GetItemString(pDict, "clientDownloadNSD");
 +  pResVal = PyObject_CallObject(pFunc, pArgs);
-+  long RIAlength = PyLong_AsLong(pResVal);
-+
-+  pFunc = PyDict_GetItemString(pDict, "client_get_current_RIA_length");
-+  pResVal = PyObject_CallObject(pFunc, pArgs);
-+  long length = PyLong_AsLong(pResVal);
-+
-+  if(length >= 0 && length < RIAlength) {
-+    log_info(LD_DIR, "Not enough relays in the current RIA.");
-+    pFunc = PyDict_GetItemString(pDict, "client_generate_random_index");
-+    pResVal = PyObject_CallObject(pFunc, pArgs);
-+    log_info(LD_DIR, "Adding relays in RIA.");
-+  }
-+
-+  Py_XDECREF(pModule);  
-+  Py_XDECREF(pArgs);
-+  Py_XDECREF(pResVal);
-+  //Py_Finalize();
-+  return 1;
-+}
-+
-+// ************
-+// BADNet
-+// ************
-+int 
-+download_MSRI_with_keys_from_blockchain(void)
-+{
-+  if (python_is_initialized == false) {
-+    Py_Initialize();
-+    if (!Py_IsInitialized()) {
-+      log_info(LD_DIR, "Fatal Python error: Py_Initialize failed.");
-+      return 0;
-+    }
-+    python_is_initialized = true;
-+  }
-+
-+  PyObject *pModule = NULL;
-+  PyObject *pDict = NULL;
-+  PyObject *pFunc = NULL;
-+  PyObject *pArgs = NULL;
-+  PyObject *pResVal = NULL;
-+
-+  PyRun_SimpleString("import sys");
-+  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-client/SC/')"); 
-+
-+  pModule = PyImport_ImportModule("Client");
-+  if (!pModule) {
-+    log_info(LD_DIR, "Fatal Python error: Load python file failed.");
-+    return 0;
-+  }
-+  pDict = PyModule_GetDict(pModule);
-+  if (!pDict) {
-+    log_info(LD_DIR, "Fatal Python error: Can't find dict in python file.");
-+    return 0;
-+  }
-+
-+  pFunc = PyDict_GetItemString(pDict, "client_get_current_RIA_length");
-+  pResVal = PyObject_CallObject(pFunc, pArgs);
-+  long length = PyLong_AsLong(pResVal);
-+
-+  bool file_exist = true;
-+  FILE *fpr = fopen("/usr/local/BADNet-client/lib/MSRI", "r");
-+  if (fpr == NULL){
-+    file_exist = false;
-+  } else {
-+    fclose(fpr);
-+  }
-+    
-+  char *MSRI[length];
-+  log_info(LD_DIR, "Launching MSRI with keys download.");
-+  if (length > 0){
-+    for (int i=0; i<length; i++) {
-+      pFunc = PyDict_GetItemString(pDict, "client_download_MSRI");
-+      pArgs = PyTuple_New(1);
-+      PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", i));
-+      pResVal = PyObject_CallObject(pFunc, pArgs);
-+      MSRI[i] = PyByteArray_AS_STRING(pResVal);
-+      if (file_exist == true && strlen(MSRI[i]) == 0){
-+        log_info(LD_DIR, "MSRI download failed, waiting for the next period.");
-+        return 0;
-+      }
-+    }
-+
-+    FILE *fpw = fopen("/usr/local/BADNet-client/lib/MSRI", "w");
-+    for (int j=0; j<length; j++) {
-+      fprintf(fpw, "%s", MSRI[j]);
-+    }
-+    fclose(fpw);
-+  }
-+
-+  Py_XDECREF(pModule);  
-+  Py_XDECREF(pArgs);
-+  Py_XDECREF(pResVal);
-+  //Py_Finalize();
-+  return 1;
-+}
-+
-+// ************
-+// BADNet
-+// ************
-+int 
-+RIA_update(void)
-+{
-+  if (python_is_initialized == false) {
-+    Py_Initialize();
-+    if (!Py_IsInitialized()) {
-+      log_info(LD_DIR, "Fatal Python error: Py_Initialize failed.");
-+      return 0;
-+    }
-+    python_is_initialized = true;
-+  }
-+
-+  PyObject *pModule = NULL;
-+  PyObject *pDict = NULL;
-+  PyObject *pFunc = NULL;
-+  PyObject *pArgs = NULL;
-+  PyObject *pResVal = NULL;
-+
-+  PyRun_SimpleString("import sys");
-+  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-client/SC/')"); 
-+
-+  pModule = PyImport_ImportModule("Client");
-+  if (!pModule) {
-+    log_info(LD_DIR, "Fatal Python error: Load python file failed.");
-+    return 0;
-+  }
-+  pDict = PyModule_GetDict(pModule);
-+  if (!pDict) {
-+    log_info(LD_DIR, "Fatal Python error: Can't find dict in python file.");
-+    return 0;
-+  }
-+
-+  pFunc = PyDict_GetItemString(pDict, "client_delete_random_index");
-+  pResVal = PyObject_CallObject(pFunc, pArgs);
-+  log_info(LD_DIR, "Client RIA delete.");
-+
-+  pFunc = PyDict_GetItemString(pDict, "client_generate_random_index");
-+  pResVal = PyObject_CallObject(pFunc, pArgs);
-+  log_info(LD_DIR, "Client RIA update.");
 +
 +  Py_XDECREF(pModule);  
 +  Py_XDECREF(pArgs);
@@ -2032,41 +1840,26 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
  /**
   * Helper: Read the current consensus of type <b>flavor</b> from
   * <b>fname</b>.  Flags and return values are as for
-@@ -1771,6 +2042,41 @@
+@@ -1771,6 +1843,26 @@
                             unsigned flags,
                             const char *source_dir)
  {
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  const or_options_t *options = get_options();
 +  const int is_server = server_mode(options);
 +  const int is_client = options_any_client_port_set(options) || !is_server;
 +
 +  if (is_client) {
-+    const char *filename = "/usr/local/BADNet-client/lib/cached-microdesc-consensus"; 
-+    const char *name = "/usr/local/BADNet-client/lib/MSRI";
++    #define fileNameOld "lib/cached-microdesc-consensus"
++    const char *filePathOld = clientPath fileNameOld;
 +
-+    if (strcmp(fname, filename) == 0) {
-+      if (client_is_registered == false) {
-+        int result = client_register();
-+        if (result == 0) {
-+          log_info(LD_DIR, "Client registration failure.");
-+          return 0;
-+        } else if (result == 1){
-+          check_current_RIA_length();
-+          if (download_MSRI_with_keys_from_blockchain() == 0){
-+            log_info(LD_DIR, "Client download MSRI failure.");
-+            return 0;
-+          }
-+        } else{
-+          if (check_current_RIA_length() == 0) {
-+            log_info(LD_DIR, "Check client RIA length failure.");
-+            return 0;
-+          }
-+        }
-+      }
-+      fname = name;
++    #define fileNameNew "lib/GSRI"
++    const char *filePathNew = clientPath fileNameNew;
++
++    if (strcmp(fname, filePathOld) == 0) {
++      fname = filePathNew;
 +    }
 +  }
 +
@@ -2074,7 +1867,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
    tor_mmap_t *map = tor_mmap_file(fname);
    if (!map)
      return 0;
-@@ -1953,16 +2259,9 @@
+@@ -1953,16 +2045,9 @@
      goto done;
    }
  
@@ -2089,12 +1882,12 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
 -  }
 -
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
    if ((int)c->flavor != flav) {
      /* This wasn't the flavor we thought we were getting. */
      if (require_flavor) {
-@@ -1981,109 +2280,6 @@
+@@ -1981,109 +2066,6 @@
      goto done;
    }
  
@@ -2204,7 +1997,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
    if (!from_cache && flav == usable_consensus_flavor())
      control_event_client_status(LOG_NOTICE, "CONSENSUS_ARRIVED");
  
-@@ -2091,10 +2287,6 @@
+@@ -2091,10 +2073,6 @@
      handle_missing_protocol_warning(c, options);
    }
  
@@ -2215,7 +2008,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
    const int is_usable_flavor = flav == usable_consensus_flavor();
  
    /* Before we switch to the new consensus, notify that we are about to change
-@@ -2125,58 +2317,12 @@
+@@ -2125,58 +2103,12 @@
      free_consensus = 0; /* avoid free */
    }
  
@@ -2274,13 +2067,13 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
    result = 0;
   done:
    if (free_consensus)
-@@ -2611,10 +2757,17 @@
+@@ -2611,10 +2543,17 @@
       * (Fetching and storing depends on by we_want_to_fetch_flavor().) */
      return 0;
    }
 +
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  /*  
    if (rs->published_on + OLD_ROUTER_DESC_MAX_AGE < now) {
@@ -2295,32 +2088,30 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.c BADNET/src/feature/no
       * If we don't know the version, download the descriptor so we can
 diff -urN tor-0.4.6.5/src/feature/nodelist/networkstatus.h BADNET/src/feature/nodelist/networkstatus.h
 --- tor-0.4.6.5/src/feature/nodelist/networkstatus.h	2021-04-16 00:41:14
-+++ BADNET/src/feature/nodelist/networkstatus.h	2022-05-16 15:36:07
-@@ -21,6 +21,14 @@
++++ BADNET/src/feature/nodelist/networkstatus.h	2023-01-14 12:08:30
+@@ -21,6 +21,12 @@
                                                  int unverified_consensus));
  tor_mmap_t *networkstatus_map_cached_consensus(const char *flavorname);
  int router_reload_consensus_networkstatus(void);
 +
 +// ************
-+// BADNet
++// BADNET
 +// ************
-+int download_MSRI_with_keys_from_blockchain(void);
-+int RIA_update(void);
-+int check_current_RIA_length(void);
++int download_NSD_from_blockchain(void);
 +
  void routerstatus_free_(routerstatus_t *rs);
  #define routerstatus_free(rs) \
    FREE_AND_NULL(routerstatus_t, routerstatus_free_, (rs))
 diff -urN tor-0.4.6.5/src/feature/nodelist/nodelist.c BADNET/src/feature/nodelist/nodelist.c
 --- tor-0.4.6.5/src/feature/nodelist/nodelist.c	2021-04-16 00:41:14
-+++ BADNET/src/feature/nodelist/nodelist.c	2022-05-16 15:36:07
++++ BADNET/src/feature/nodelist/nodelist.c	2023-01-14 12:43:31
 @@ -715,6 +715,11 @@
      node_t *node = node_get_or_create(rs->identity_digest);
      node->rs = rs;
      if (ns->flavor == FLAV_MICRODESC) {
 +
 +      // ************
-+      // BADNet
++      // BADNET
 +      // ************
 +      /*
        if (node->md == NULL ||
@@ -2343,7 +2134,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/nodelist.c BADNET/src/feature/nodelis
      }
  
 +    // ************
-+    // BADNet
++    // BADNET
 +    // ************
 +    /*
      if (rs->pv.supports_v3_hsdir) {
@@ -2361,7 +2152,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/nodelist.c BADNET/src/feature/nodelis
 -  nodelist_assert_ok();
 +
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************  
 +  // nodelist_assert_ok();
  }
@@ -2375,7 +2166,7 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/nodelist.c BADNET/src/feature/nodelis
 -           present = NULL != microdesc_cache_lookup_by_digest256(NULL, digest);
 +         if (md) {
 +           // ************
-+           // BADNet
++           // BADNET
 +           // ************
 +           // present = NULL != microdesc_cache_lookup_by_digest256(NULL, digest);
 +           present = 1;
@@ -2385,13 +2176,13 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/nodelist.c BADNET/src/feature/nodelis
           if (present) {
 diff -urN tor-0.4.6.5/src/feature/nodelist/routerstatus_st.h BADNET/src/feature/nodelist/routerstatus_st.h
 --- tor-0.4.6.5/src/feature/nodelist/routerstatus_st.h	2021-04-16 00:41:14
-+++ BADNET/src/feature/nodelist/routerstatus_st.h	2022-05-16 15:36:07
++++ BADNET/src/feature/nodelist/routerstatus_st.h	2023-01-14 12:31:28
 @@ -14,6 +14,11 @@
  
  #include "feature/dirclient/download_status_st.h"
  
 +// ************
-+// BADNet
++// BADNET
 +// ************
 +#include "feature/nodelist/microdesc_st.h"
 +
@@ -2404,22 +2195,124 @@ diff -urN tor-0.4.6.5/src/feature/nodelist/routerstatus_st.h BADNET/src/feature/
    download_status_t dl_status;
 +
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  microdesc_t *md;
  
  };
  
+Binary files tor-0.4.6.5/src/feature/relay/.DS_Store and BADNET/src/feature/relay/.DS_Store differ
+diff -urN tor-0.4.6.5/src/feature/relay/bkem.h BADNET/src/feature/relay/bkem.h
+--- tor-0.4.6.5/src/feature/relay/bkem.h	1970-01-01 08:00:00
++++ BADNET/src/feature/relay/bkem.h	2022-04-21 13:08:37
+@@ -0,0 +1,97 @@
++#ifndef H_BKEM
++#define H_BKEM
++
++#include <string.h>
++#include <pbc/pbc.h>
++
++/**
++  @typedef Global broadcast system parameters
++ */
++typedef struct bkem_global_params_s {
++	pairing_t pairing;
++	int N;
++	int B;
++	int A;
++}* bkem_global_params_t;
++
++/**
++ * @typedef Public Key
++ * Contains generator g, 2B-2 elements g[i] and A elements v[i]
++ */
++typedef struct pubkey_s {
++    element_t g; // generator
++    element_t *g_i; // 2B-2 elements
++    element_t *v_i; // A elements
++}* pubkey_t;
++
++/**
++ * @typedef broadcast system instance
++ */
++typedef struct bkem_system_s {
++	pubkey_t PK;
++	/** Private key of user s */
++	element_t *d_i;
++}* bkem_system_t;
++
++/**
++ * @typedef Keypair (HDR, K) [A+1, 1] elements
++ */
++typedef struct keypair_s {
++    element_t *HDR;
++    element_t K;
++}* keypair_t;
++
++/**
++ * @brief Free a keypair_t
++ */
++void free_pubkey(pubkey_t pk, bkem_global_params_t gbs);
++
++/**
++ * @brief Free a bkem_system_t
++ */
++void free_bkem_system(bkem_system_t sys, bkem_global_params_t gbs);
++
++/**
++ * @brief Free a global_broadcast_params_t
++ */
++void free_global_params(bkem_global_params_t gbs);
++
++/**
++ * Setup global broadcast system parameters
++ * @param[out] gps bkem_global_params_t pointer
++ * @param[in] params Pairing Type paramters as string
++ * @param[in] n number of users in the system
++ */
++void setup_global_system(bkem_global_params_t *gps, const char *params, int n);
++
++/**
++ * Setup broadcast key encapsulation system
++ * @param[out] sys bkem_system_t pointer
++ * @param[in] gps bkem_global_params_t pointer
++ */
++void setup(bkem_system_t *sys, bkem_global_params_t gps);
++
++/**
++ * Output encryption Keypair
++ * @param[out] keypair pointer to encryption pair output
++ * @param[in] S receiver array [indices of participating users]
++ * @param[in] num_recip Number of elements in S
++ * @param[in] sys Broadcast encryption parameters
++ */
++void get_encryption_key(keypair_t *key, int *S, int num_recip, bkem_system_t sys, bkem_global_params_t gps);
++
++/**
++ * Output decryption Key
++ * @param[out] K decryption key pointer
++ * @param[in] gps global system parameters
++ * @param[in] S receivers [indices of participating users]
++ * @param[in] num_recip Number of elements in S
++ * @param[in] i index of user
++ * @param[in] d_i private key of user i
++ * @param[in] HDR header
++ * @param[in] PK public key
++ */
++void get_decryption_key(element_t K, bkem_global_params_t gbs, int *S, int num_recip, int i, 
++		element_t d_i, element_t *HDR, pubkey_t PK);
++
++#endif
 diff -urN tor-0.4.6.5/src/feature/relay/relay_periodic.c BADNET/src/feature/relay/relay_periodic.c
 --- tor-0.4.6.5/src/feature/relay/relay_periodic.c	2021-04-16 00:41:14
-+++ BADNET/src/feature/relay/relay_periodic.c	2022-05-16 15:36:07
++++ BADNET/src/feature/relay/relay_periodic.c	2022-11-21 18:48:05
 @@ -104,9 +104,19 @@
      log_info(LD_GENERAL,"Rotating onion key.");
      rotate_onion_key();
      cpuworkers_rotate_keyinfo();
 +
 +    // ************
-+    // BADNet
++    // BADNET
 +    // ************
 +    /*    
      if (!router_rebuild_descriptor(1)) {
@@ -2438,7 +2331,7 @@ diff -urN tor-0.4.6.5/src/feature/relay/relay_periodic.c BADNET/src/feature/rela
   * way that would require an upload? That includes checking whether our IP
   * address has changed. */
 -#define CHECK_DESCRIPTOR_INTERVAL (60)
-+#define CHECK_DESCRIPTOR_INTERVAL (60*60)
++#define CHECK_DESCRIPTOR_INTERVAL (10*60)
  
    (void)options;
  
@@ -2446,7 +2339,7 @@ diff -urN tor-0.4.6.5/src/feature/relay/relay_periodic.c BADNET/src/feature/rela
     * one is inaccurate. */
 +
 +  // ************
-+  // BADNet
++  // BADNET
 +  // ************
 +  /*
    if (!net_is_disabled()) {
@@ -2464,8 +2357,8 @@ diff -urN tor-0.4.6.5/src/feature/relay/relay_periodic.c BADNET/src/feature/rela
    return CHECK_DESCRIPTOR_INTERVAL;
 diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router.c
 --- tor-0.4.6.5/src/feature/relay/router.c	2021-04-16 00:41:14
-+++ BADNET/src/feature/relay/router.c	2022-11-18 19:38:06
-@@ -70,6 +70,19 @@
++++ BADNET/src/feature/relay/router.c	2022-12-10 11:46:30
+@@ -70,6 +70,20 @@
  #include "feature/nodelist/routerinfo_st.h"
  #include "feature/nodelist/routerstatus_st.h"
  
@@ -2478,14 +2371,15 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
 +#define relayPath "/usr/local/BADNET-V3-relay/"
 +#define sysPath "sys.path.append('/usr/local/BADNET-V3-relay/SC/')"
 +
-+#define MAX_REALY_NUMBER 100
 +static bool python_is_initialized = false;
 +static bool relay_is_registered = false;
++static long myIndex = 0;
++#define MAX_REALY_NUMBER 1000
 +
  /**
   * \file router.c
   * \brief Miscellaneous relay functionality, including RSA key maintenance,
-@@ -1465,7 +1478,12 @@
+@@ -1465,7 +1479,12 @@
    if (!server_mode(get_options()))
      return;
  
@@ -2499,7 +2393,7 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
    if (rebuilt && decide_if_publishable_server()) {
      set_server_advertised(1);
      router_upload_dir_desc_to_dirservers(force);
-@@ -1855,8 +1873,17 @@
+@@ -1855,8 +1874,17 @@
  {
    if (!server_mode(get_options()))
      return NULL;
@@ -2517,7 +2411,7 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
    return desc_extrainfo;
  }
  
-@@ -2442,13 +2469,533 @@
+@@ -2442,13 +2470,538 @@
    return 0;
  }
  
@@ -2657,19 +2551,22 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
 +
 +  pFunc = PyDict_GetItemString(pDict, "relayRegistrationCheck");
 +  pResVal = PyObject_CallObject(pFunc, pArgs);
-+  long flag = PyLong_AsLong(pResVal);
++  long index = PyLong_AsLong(pResVal);
 +
-+  if (flag == 1) {
-+    log_info(LD_DIR, "Relay is already registered in the network."); 
-+    relay_is_registered = true;
-+  } 
-+  else {
-+    log_info(LD_DIR, "Relay is not yet registered in the network"); 
++  if (index == 0) {
++    log_info(LD_DIR, "Relay is registering ......");
 +    pFunc = PyDict_GetItemString(pDict, "relayRegister");
 +    pResVal = PyObject_CallObject(pFunc, pArgs);
-+    relay_is_registered = true;
-+    log_info(LD_DIR, "Relay is already registered in the network.");    
++
++    pFunc = PyDict_GetItemString(pDict, "relayRegistrationCheck");
++    pResVal = PyObject_CallObject(pFunc, pArgs);
++    myIndex = PyLong_AsLong(pResVal);
 +  }
++  else {
++    myIndex = index;
++  }
++  relay_is_registered = true;
++  log_info(LD_DIR, "Relay is already registered in the network, and myIndex is %d.", myIndex);
 +
 +  Py_XDECREF(pModule);  
 +  Py_XDECREF(pArgs);
@@ -2684,7 +2581,7 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
 +void 
 +bkem_param(bkem_global_params_t *bgps, bkem_system_t *bsys)
 +{
-+  #define fileName1 "lib/a.param"
++  #define fileName1 "lib/BEsystem/a.param"
 +  char* filePath1 = relayPath fileName1;
 +  FILE *fParam = fopen(filePath1, "r");
 +  char buf[4096];
@@ -2701,7 +2598,7 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
 +  sys->PK->g_i = pbc_malloc(2 * gps->B * sizeof(element_t));
 +  sys->PK->v_i = pbc_malloc(gps->A * sizeof(struct element_s));
 +
-+  #define fileName2 "lib/BEPK"
++  #define fileName2 "lib/BEsystem/BEPK"
 +  char* filePath2 = relayPath fileName2;
 +  FILE *fpPK = fopen(filePath2, "r");
 +  char strLine[512];
@@ -2885,7 +2782,7 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
 +  bkem_system_t sys;
 +  bkem_param(&gps, &sys);
 +
-+  #define fileName "lib/BESK"
++  #define fileName "lib/BEsystem/BESK"
 +  char* filePath = relayPath fileName;
 +  FILE *fpSK = fopen(filePath, "r");  
 +  char strLine[512];
@@ -2970,11 +2867,11 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
 +
 +  log_info(LD_DIR, "The number of CurrentCounter is %d.", Counter);
 +  if (!PyList_Check(pRes2)){
-+      printf("Failed to fetch the set S used for broadcast encryption.");
++      log_info(LD_DIR, "Failed to fetch the set S used for broadcast encryption.");
 +  }
 +
 +  int SizeOfList = PyList_Size(pRes2);
-+  printf("SizeOfList: %d\n", SizeOfList);
++  log_info(LD_DIR, "SizeOfList: %d", SizeOfList);
 +  int relaySet[SizeOfList];
 +  for(int i=0; i<SizeOfList; i++) {
 +    PyObject *listItem = PyList_GetItem(pRes2, i);
@@ -2999,41 +2896,43 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
 +    PyObject *pRelaySet = NULL;
 +    char *enSRI = NULL;
 +    PyArg_ParseTuple(pResVal, "O|O|s", &pRelaySet, &pHdr, &enSRI);
-+        
-+    int num = PyList_Size(pRelaySet);
-+    int S[num];
-+    for(int i=0; i<num; i++) {
-+      PyObject *listItem = PyList_GetItem(pRelaySet, i);
-+      int arrItem = 0;
-+      PyArg_Parse(listItem, "i", &arrItem);
-+      S[i] = arrItem;
-+      Py_DECREF(listItem);
++
++    if(strlen(enSRI) != 0) {
++      int setNum = PyList_Size(pRelaySet);
++      int S[setNum];
++      for(int j=0; j<setNum; j++) {
++        PyObject *listItem = PyList_GetItem(pRelaySet, j);
++        int arrItem = 0;
++        PyArg_Parse(listItem, "i", &arrItem);
++        S[j] = arrItem;
++        Py_DECREF(listItem);
++      }
++
++      int HdrNum = PyList_Size(pHdr);
++      char *Hdr[HdrNum];
++      for(int j=0; j<HdrNum; j++) {
++        PyObject *listItem = PyObject_Str(PyList_GetItem(pHdr, j));
++        char* resultStr = "";
++        PyArg_Parse(listItem, "s", &resultStr);
++        Hdr[j] = (char*)malloc(200*sizeof(char));
++        strcpy(Hdr[j], resultStr);
++        Py_DECREF(listItem);
++      }
++
++      char *decKey = NULL;
++      bkem_decryption(&decKey, S, setNum, (int) myIndex, Hdr);
++
++      pFunc = PyDict_GetItemString(pDict, "relayDecryptSRIs");
++      pArgs = PyTuple_New(4);
++      PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", relayID));
++      PyTuple_SetItem(pArgs, 1, Py_BuildValue("s", enSRI));
++      PyTuple_SetItem(pArgs, 2, Py_BuildValue("s", decKey));
++      PyTuple_SetItem(pArgs, 3, Py_BuildValue("i", fileEnd));
++      pResVal = PyObject_CallObject(pFunc, pArgs);
 +    }
-+
-+    int HdrNum = PyList_Size(pHdr);
-+    char *Hdr[HdrNum];
-+    for(int i=0; i<HdrNum; i++) {
-+      PyObject *listItem = PyObject_Str(PyList_GetItem(pHdr, i));
-+      char* resultStr = "";
-+      PyArg_Parse(listItem, "s", &resultStr);
-+      Hdr[i] = (char*)malloc(200*sizeof(char));
-+      strcpy(Hdr[i], resultStr);
-+      Py_DECREF(listItem);
-+    }
-+
-+    char *decKey = NULL;
-+    bkem_decryption(&decKey, S, num, myIndex, Hdr);
-+
-+    pFunc = PyDict_GetItemString(pDict, "relayDecryptSRIs");
-+    pArgs = PyTuple_New(4);
-+    PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", relayID));
-+    PyTuple_SetItem(pArgs, 1, Py_BuildValue("s", enSRI));
-+    PyTuple_SetItem(pArgs, 2, Py_BuildValue("s", decKey));
-+    PyTuple_SetItem(pArgs, 3, Py_BuildValue("i", fileEnd));
-+    pResVal = PyObject_CallObject(pFunc, pArgs);
 +  }
 +
-+  log_info(LD_DIR, "%s successfully downloads NIME from blockchain.", ri->nickname);
++  log_info(LD_DIR, "Successfully downloads NIME from blockchain.");
 +  Py_XDECREF(pModule);  
 +  Py_XDECREF(pArgs);
 +  Py_XDECREF(pResVal);
@@ -3052,7 +2951,7 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
  {
    int err = 0;
    routerinfo_t *ri;
-@@ -2464,6 +3011,27 @@
+@@ -2464,6 +3017,29 @@
      return false;
    }
  
@@ -3066,21 +2965,23 @@ diff -urN tor-0.4.6.5/src/feature/relay/router.c BADNET/src/feature/relay/router
 +        return false;
 +      }
 +    }
-+    
++
 +    if (router_download_descriptor_from_blockchain() == 0) {
-+      log_info(LD_DIR, "Relay download descriptors failure.");
++      log_info(LD_DIR, "Relay download failure.");
++      return false;
 +    }
 +
 +    if (router_upload_descriptor_to_blockchain(ri) == 0) {
-+      log_info(LD_DIR, "Relay upload its descriptor failure.");
++      log_info(LD_DIR, "Relay upload failure.");
 +      return false;
 +    }
++    
 +  }
 +
    routerinfo_free(desc_routerinfo);
    desc_routerinfo = ri;
    extrainfo_free(desc_extrainfo);
-@@ -2472,9 +3040,16 @@
+@@ -2472,9 +3048,16 @@
    desc_clean_since = time(NULL);
    desc_needs_upload = 1;
    desc_gen_reason = desc_dirty_reason;
