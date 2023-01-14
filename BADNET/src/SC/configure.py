@@ -34,7 +34,7 @@ def relay_get_upload_period():
 
 def main(argv):
     if argv[1] == 'client':
-        path = '/usr/local/BADNET-V3-client/'
+        path = '/usr/local/BADNET-V3-client/SC/account.py'
         with open(path, mode='w') as filename:
             filename.write('contract_address = "' + contract_address + '"' + '\n\n')
 
