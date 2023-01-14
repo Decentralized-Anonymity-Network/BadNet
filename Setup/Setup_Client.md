@@ -17,7 +17,7 @@ git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 
 ### Quick auto setup
 ```bat
-cd BadNet
+cd BadNet/BADNET
 sudo sh badnet.sh
 sudo ./configure
 sudo make
