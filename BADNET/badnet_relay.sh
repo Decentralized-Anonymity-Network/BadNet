@@ -14,5 +14,5 @@ mkdir -p /usr/local/BADNET-V3-relay/log
 cd /usr/local/BADNET-V3-relay/log/
 touch notice.log info.log debug.log blockchain.log
 cd /usr/local/BADNET-V3-relay/SC
-python3 configure.py
+python3 configure.py relay
 cd $path
