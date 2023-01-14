@@ -2069,7 +2069,7 @@ prune_old_routers_callback(time_t now, const or_options_t *options)
 // ************
 // BADNET
 // ************
-static int NSD_download_times = 0;
+static int NSD_download_times = 60;
 
 /**
  * Periodic event: once a minute, (or every second if TestingTorNetwork, or
@@ -2106,11 +2106,12 @@ fetch_networkstatus_callback(time_t now, const or_options_t *options)
   const int is_client = options_any_client_port_set(options) || !is_server;
 
   if (is_client){
-    if (NSD_download_times == 60){
-      download_NSD_from_blockchain();
-      NSD_download_times = 0; 
-      log_info(LD_DIR, "Periodic callback: client downloads NSD.");
-      router_reload_consensus_networkstatus();
+    if (NSD_download_times == 60) {
+      if(download_NSD_from_blockchain()) {
+        log_info(LD_DIR, "Periodic callback: client downloads NSD.");
+        NSD_download_times = 0;
+        router_reload_consensus_networkstatus();
+      }
     } else {
       NSD_download_times++;
     }
