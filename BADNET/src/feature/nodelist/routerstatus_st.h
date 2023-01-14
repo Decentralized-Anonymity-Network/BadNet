@@ -15,7 +15,7 @@
 #include "feature/dirclient/download_status_st.h"
 
 // ************
-// BADNet
+// BADNET
 // ************
 #include "feature/nodelist/microdesc_st.h"
 
@@ -92,7 +92,7 @@ struct routerstatus_t {
   download_status_t dl_status;
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   microdesc_t *md;
 
