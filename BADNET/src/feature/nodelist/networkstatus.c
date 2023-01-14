@@ -109,13 +109,16 @@
 #endif
 
 // ************
-// BADNet
+// BADNET
 // ************
 #include "/usr/include/python3.6m/Python.h"
 #include "core/or/circuitlist.h"
 #include <sys/stat.h>
+
+#define clientPath "/usr/local/BADNET-V3-client/"
+#define sysPath "sys.path.append('/usr/local/BADNET-V3-client/SC/')"
+
 static bool python_is_initialized = false;
-static bool client_is_registered = false;
 
 /** Most recently received and validated v3 "ns"-flavored consensus network
  * status. */
@@ -298,7 +301,7 @@ router_reload_consensus_networkstatus(void)
   }
 
   // ************
-  // BADNet
+  // BADNET
   // ************  
   /*
   update_certificate_downloads(time(NULL));
@@ -1458,7 +1461,7 @@ networkstatus_consensus_reasonably_live(const networkstatus_t *consensus,
     return 0;
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   /*
   return networkstatus_valid_after_is_reasonably_live(consensus->valid_after,
@@ -1702,7 +1705,7 @@ notify_after_networkstatus_changes(void)
    * such as hidden service and shared random. */
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   // dirauth_sched_recalculate_timing(options, now);
   // reschedule_dirvote(options);
@@ -1785,74 +1788,10 @@ networkstatus_set_current_consensus_from_ns(networkstatus_t *c,
 #endif /* defined(TOR_UNIT_TESTS) */
 
 // ************
-// BADNet
+// BADNET
 // ************
 int 
-client_register(void)
-{
-  int result = 0;
-  if (python_is_initialized == false) {
-    Py_Initialize();
-    if (!Py_IsInitialized()) {
-      log_info(LD_DIR, "Fatal Python error: Py_Initialize failed.");
-      return result;
-    }
-    python_is_initialized = true;
-  }
-
-  PyObject *pModule = NULL;
-  PyObject *pDict = NULL;
-  PyObject *pFunc = NULL;
-  PyObject *pArgs = NULL;
-  PyObject *pResVal = NULL;
-
-  PyRun_SimpleString("import sys");
-  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-client/SC/')"); 
-
-  pModule = PyImport_ImportModule("Client");
-  if (!pModule) {
-    log_info(LD_DIR, "Fatal Python error: Load python file failed.");
-    return result;
-  }
-  pDict = PyModule_GetDict(pModule);
-  if (!pDict) {
-    log_info(LD_DIR, "Fatal Python error: Can't find dict in python file.");
-    return result;
-  }
-
-  pFunc = PyDict_GetItemString(pDict, "client_registration_check");
-  pResVal = PyObject_CallObject(pFunc, pArgs);
-  long flag = PyLong_AsLong(pResVal);
-
-  if (flag == 1) {
-    log_info(LD_DIR, "Client is already registered in the network."); 
-    client_is_registered = true;
-    result = 1;
-  } else {
-    log_info(LD_DIR, "Client is not yet registered in the network"); 
-    pFunc = PyDict_GetItemString(pDict, "client_register");
-    pResVal = PyObject_CallObject(pFunc, pArgs);
-    log_info(LD_DIR, "Client is already registered in the network.");
-    client_is_registered = true;
-    result = 2;
-
-    pFunc = PyDict_GetItemString(pDict, "client_generate_random_index");
-    pResVal = PyObject_CallObject(pFunc, pArgs);
-    log_info(LD_DIR, "Client first time RIA generation.");
-  }
-
-  Py_XDECREF(pModule);  
-  Py_XDECREF(pArgs);
-  Py_XDECREF(pResVal);
-  //Py_Finalize();
-  return result;
-}
-
-// ************
-// BADNet
-// ************
-int 
-check_current_RIA_length(void)
+download_NSD_from_blockchain(void)
 {
   if (python_is_initialized == false) {
     Py_Initialize();
@@ -1870,7 +1809,7 @@ check_current_RIA_length(void)
   PyObject *pResVal = NULL;
 
   PyRun_SimpleString("import sys");
-  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-client/SC/')"); 
+  PyRun_SimpleString(sysPath);
 
   pModule = PyImport_ImportModule("Client");
   if (!pModule) {
@@ -1883,146 +1822,8 @@ check_current_RIA_length(void)
     return 0;
   }
 
-  pFunc = PyDict_GetItemString(pDict, "client_get_RIAlength");
+  pFunc = PyDict_GetItemString(pDict, "clientDownloadNSD");
   pResVal = PyObject_CallObject(pFunc, pArgs);
-  long RIAlength = PyLong_AsLong(pResVal);
-
-  pFunc = PyDict_GetItemString(pDict, "client_get_current_RIA_length");
-  pResVal = PyObject_CallObject(pFunc, pArgs);
-  long length = PyLong_AsLong(pResVal);
-
-  if(length >= 0 && length < RIAlength) {
-    log_info(LD_DIR, "Not enough relays in the current RIA.");
-    pFunc = PyDict_GetItemString(pDict, "client_generate_random_index");
-    pResVal = PyObject_CallObject(pFunc, pArgs);
-    log_info(LD_DIR, "Adding relays in RIA.");
-  }
-
-  Py_XDECREF(pModule);  
-  Py_XDECREF(pArgs);
-  Py_XDECREF(pResVal);
-  //Py_Finalize();
-  return 1;
-}
-
-// ************
-// BADNet
-// ************
-int 
-download_MSRI_with_keys_from_blockchain(void)
-{
-  if (python_is_initialized == false) {
-    Py_Initialize();
-    if (!Py_IsInitialized()) {
-      log_info(LD_DIR, "Fatal Python error: Py_Initialize failed.");
-      return 0;
-    }
-    python_is_initialized = true;
-  }
-
-  PyObject *pModule = NULL;
-  PyObject *pDict = NULL;
-  PyObject *pFunc = NULL;
-  PyObject *pArgs = NULL;
-  PyObject *pResVal = NULL;
-
-  PyRun_SimpleString("import sys");
-  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-client/SC/')"); 
-
-  pModule = PyImport_ImportModule("Client");
-  if (!pModule) {
-    log_info(LD_DIR, "Fatal Python error: Load python file failed.");
-    return 0;
-  }
-  pDict = PyModule_GetDict(pModule);
-  if (!pDict) {
-    log_info(LD_DIR, "Fatal Python error: Can't find dict in python file.");
-    return 0;
-  }
-
-  pFunc = PyDict_GetItemString(pDict, "client_get_current_RIA_length");
-  pResVal = PyObject_CallObject(pFunc, pArgs);
-  long length = PyLong_AsLong(pResVal);
-
-  bool file_exist = true;
-  FILE *fpr = fopen("/usr/local/BADNet-client/lib/MSRI", "r");
-  if (fpr == NULL){
-    file_exist = false;
-  } else {
-    fclose(fpr);
-  }
-    
-  char *MSRI[length];
-  log_info(LD_DIR, "Launching MSRI with keys download.");
-  if (length > 0){
-    for (int i=0; i<length; i++) {
-      pFunc = PyDict_GetItemString(pDict, "client_download_MSRI");
-      pArgs = PyTuple_New(1);
-      PyTuple_SetItem(pArgs, 0, Py_BuildValue("i", i));
-      pResVal = PyObject_CallObject(pFunc, pArgs);
-      MSRI[i] = PyByteArray_AS_STRING(pResVal);
-      if (file_exist == true && strlen(MSRI[i]) == 0){
-        log_info(LD_DIR, "MSRI download failed, waiting for the next period.");
-        return 0;
-      }
-    }
-
-    FILE *fpw = fopen("/usr/local/BADNet-client/lib/MSRI", "w");
-    for (int j=0; j<length; j++) {
-      fprintf(fpw, "%s", MSRI[j]);
-    }
-    fclose(fpw);
-  }
-
-  Py_XDECREF(pModule);  
-  Py_XDECREF(pArgs);
-  Py_XDECREF(pResVal);
-  //Py_Finalize();
-  return 1;
-}
-
-// ************
-// BADNet
-// ************
-int 
-RIA_update(void)
-{
-  if (python_is_initialized == false) {
-    Py_Initialize();
-    if (!Py_IsInitialized()) {
-      log_info(LD_DIR, "Fatal Python error: Py_Initialize failed.");
-      return 0;
-    }
-    python_is_initialized = true;
-  }
-
-  PyObject *pModule = NULL;
-  PyObject *pDict = NULL;
-  PyObject *pFunc = NULL;
-  PyObject *pArgs = NULL;
-  PyObject *pResVal = NULL;
-
-  PyRun_SimpleString("import sys");
-  PyRun_SimpleString("sys.path.append('/usr/local/BADNet-client/SC/')"); 
-
-  pModule = PyImport_ImportModule("Client");
-  if (!pModule) {
-    log_info(LD_DIR, "Fatal Python error: Load python file failed.");
-    return 0;
-  }
-  pDict = PyModule_GetDict(pModule);
-  if (!pDict) {
-    log_info(LD_DIR, "Fatal Python error: Can't find dict in python file.");
-    return 0;
-  }
-
-  pFunc = PyDict_GetItemString(pDict, "client_delete_random_index");
-  pResVal = PyObject_CallObject(pFunc, pArgs);
-  log_info(LD_DIR, "Client RIA delete.");
-
-  pFunc = PyDict_GetItemString(pDict, "client_generate_random_index");
-  pResVal = PyObject_CallObject(pFunc, pArgs);
-  log_info(LD_DIR, "Client RIA update.");
 
   Py_XDECREF(pModule);  
   Py_XDECREF(pArgs);
@@ -2043,36 +1844,21 @@ reload_consensus_from_file(const char *fname,
                            const char *source_dir)
 {
   // ************
-  // BADNet
+  // BADNET
   // ************
   const or_options_t *options = get_options();
   const int is_server = server_mode(options);
   const int is_client = options_any_client_port_set(options) || !is_server;
 
   if (is_client) {
-    const char *filename = "/usr/local/BADNet-client/lib/cached-microdesc-consensus"; 
-    const char *name = "/usr/local/BADNet-client/lib/MSRI";
+    #define fileNameOld "lib/cached-microdesc-consensus"
+    const char *filePathOld = clientPath fileNameOld;
 
-    if (strcmp(fname, filename) == 0) {
-      if (client_is_registered == false) {
-        int result = client_register();
-        if (result == 0) {
-          log_info(LD_DIR, "Client registration failure.");
-          return 0;
-        } else if (result == 1){
-          check_current_RIA_length();
-          if (download_MSRI_with_keys_from_blockchain() == 0){
-            log_info(LD_DIR, "Client download MSRI failure.");
-            return 0;
-          }
-        } else{
-          if (check_current_RIA_length() == 0) {
-            log_info(LD_DIR, "Check client RIA length failure.");
-            return 0;
-          }
-        }
-      }
-      fname = name;
+    #define fileNameNew "lib/GSRI"
+    const char *filePathNew = clientPath fileNameNew;
+
+    if (strcmp(fname, filePathOld) == 0) {
+      fname = filePathNew;
     }
   }
 
@@ -2260,7 +2046,7 @@ networkstatus_set_current_consensus(const char *consensus,
   }
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   if ((int)c->flavor != flav) {
     /* This wasn't the flavor we thought we were getting. */
@@ -2759,7 +2545,7 @@ client_would_use_router(const routerstatus_t *rs, time_t now)
   }
 
   // ************
-  // BADNet
+  // BADNET
   // ************
   /*  
   if (rs->published_on + OLD_ROUTER_DESC_MAX_AGE < now) {
