@@ -17,7 +17,7 @@ git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git
 
 ### Quick auto setup
 ```bat
-cd BADNet
+cd BADNET
 sudo sh badnet.sh
 sudo ./configure
 sudo make
@@ -26,7 +26,7 @@ sudo make
 ### Running BADNET client
 ```bat
 cd src/app
-sudo ./tor -f /usr/local/BADNet-client/BADNet.client
+sudo ./tor -f /usr/local/BADNET-V3-client/BADNET.client
 ```
 
 ### Using BADNET in Google Chrome
