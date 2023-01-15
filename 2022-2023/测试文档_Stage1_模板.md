@@ -11,7 +11,7 @@ TZJ, DC, GJQ, CTX 等小组同学（以名字首字母缩写作为代号即可�
 进行网页访问/文档下载/视频浏览等操作，记录匿名网络的使用情况。（访问的网站可以从 [Top 1000 websites](https://dataforseo.com/top-1000-websites) 中选取）
 
 #### （2）带宽测试：定量测量网络带宽
-同时运行两个浏览器，以BADNET代理方式运行的Google浏览器和其他浏览器，先后分别用两个浏览器访问网络带宽测试网站（例如 [SPEEDTEST](https://www.speedtest.net/), [互联网速度测试](https://fast.com/zh/cn/) 等），记录具体带宽数值。
+同时打开两个浏览器，即以BADNET代理方式运行的Google浏览器和任一其他浏览器，然后分别用两个浏览器访问带宽测试网站（例如 [SPEEDTEST](https://www.speedtest.net/), [互联网速度测试](https://fast.com/zh/cn/) 等），记录具体带宽数值。
 
 ## 测试结果
 #### 客户端部署
