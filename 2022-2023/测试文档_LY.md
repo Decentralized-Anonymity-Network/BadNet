@@ -12,14 +12,14 @@ LY
 
 - 问题1
 
-  ```golang
+  ```
   Ping不通github.com
   解决方法：输入cd /后输入vim etc/hosts，点击a，在最后一行添加140.82.112.4 github.com，后点击esc键，输入：wq
   ```
 
 - 问题2
 
-  ```golang
+  ```
   运行google出现问题/usr/bin/google-chrome: symbol lookup error: /usr/bin/google-chrome: undefined symbol: gbm_bo_get_modifier
   解决方法：输入yum install mesa-libgbm后输入google-chrome --no-sandbox --proxy-server=socks5://127.0.0.1:9550
   错误原因：缺少libgbm库
@@ -27,23 +27,18 @@ LY
   
   - 问题3
 
-  ```golang
-  执行git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git报错没有git命令
+  ```
+  执行git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git 报错没有git命令
   解决方法：yum install git
   错误原因：缺少git库
   ```
   
   - 问题4
 
-  ```golang
-  浏览器输入网址无响应
-  解决方法：终端输入curl --socks5 127.0.0.1:9550 http://checkip.amazonaws.com/
   ```
-  
-  - 问题5
-
-  ```golang
-  输入sudo make报错make： ***[all] 错误 2
+  输入sudo make报错
+      You need asciidoc installed to be able to build the manpages. 
+      To build without manpages, use the --disable-asciidoc argument when calling configure.
   解决方法：
   将sudo ./configure --with-zlib-dir=/usr/lib替换成sudo ./configure --with-zlib-dir=/usr/lib --disable-asciidoc，再执行sudo make
   ```
