@@ -12,36 +12,45 @@ LY
 
 - 问题1
 
-  ```
-  Ping不通github.com
-  解决方法：输入cd /后输入vim etc/hosts，点击a，在最后一行添加140.82.112.4 github.com，后点击esc键，输入：wq
-  ```
+```
+Ping不通github.com
+解决方法：
+    cd /
+    vim etc/hosts
+    在最后一行添加140.82.112.4 github.com
+```
 
 - 问题2
 
-  ```
-  运行google出现问题/usr/bin/google-chrome: symbol lookup error: /usr/bin/google-chrome: undefined symbol: gbm_bo_get_modifier
-  解决方法：输入yum install mesa-libgbm后输入google-chrome --no-sandbox --proxy-server=socks5://127.0.0.1:9550
-  错误原因：缺少libgbm库
-  ```
-  
-  - 问题3
+```
+运行google出现问题
+    /usr/bin/google-chrome: symbol lookup error: 
+    /usr/bin/google-chrome: undefined symbol: gbm_bo_get_modifier
+解决方法：
+    yum install mesa-libgbm
+    google-chrome --no-sandbox --proxy-server=socks5://127.0.0.1:9550
+错误原因：缺少libgbm库
+```
 
-  ```
-  执行git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git 报错没有git命令
-  解决方法：yum install git
-  错误原因：缺少git库
-  ```
-  
-  - 问题4
+- 问题3
 
-  ```
-  输入sudo make报错
-      You need asciidoc installed to be able to build the manpages. 
-      To build without manpages, use the --disable-asciidoc argument when calling configure.
-  解决方法：
-  将sudo ./configure --with-zlib-dir=/usr/lib替换成sudo ./configure --with-zlib-dir=/usr/lib --disable-asciidoc，再执行sudo make
-  ```
+```
+执行git clone https://github.com/Decentralized-Anonymity-Network/BadNet.git 报错没有git命令
+解决方法：yum install git
+错误原因：缺少git库
+```
+ 
+- 问题4
+
+```
+输入sudo make报错
+    You need asciidoc installed to be able to build the manpages. 
+    To build without manpages, use the --disable-asciidoc argument when calling configure.
+解决方法：
+    将sudo ./configure --with-zlib-dir=/usr/lib替换成
+    sudo ./configure --with-zlib-dir=/usr/lib --disable-asciidoc
+    再执行sudo make
+```
 
 ### 可行性测试
 
