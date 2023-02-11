@@ -15,8 +15,7 @@ ZJX
 ```
 运行google出现问题/usr/bin/google-chrome: symbol lookup error: /usr/bin/google-chrome: undefined symbol: gbm_bo_get_modifier
 解决方法：
-  输入yum install mesa-libgbm后输入
-  google-chrome --no-sandbox --proxy-server=socks5://127.0.0.1:9550
+  输入yum install mesa-libgbm后输入google-chrome --no-sandbox --proxy-server=socks5://127.0.0.1:9550
 错误原因：
   缺少libgbm库
   ```
