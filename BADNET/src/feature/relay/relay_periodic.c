@@ -134,7 +134,7 @@ check_descriptor_callback(time_t now, const or_options_t *options)
 /** How often do we check whether part of our router info has changed in a
  * way that would require an upload? That includes checking whether our IP
  * address has changed. */
-#define CHECK_DESCRIPTOR_INTERVAL (10*60)
+#define CHECK_DESCRIPTOR_INTERVAL (60*60)
 
   (void)options;
 
